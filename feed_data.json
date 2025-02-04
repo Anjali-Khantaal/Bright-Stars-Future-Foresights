@@ -1,0 +1,161 @@
+{
+    "Reuters Commodities": {
+        "feed_title": "No title available",
+        "feed_url": "http://feeds.reuters.com/reuters/commoditiesNews",
+        "entries": []
+    },
+    "OilPrice": {
+        "feed_title": "No title available",
+        "feed_url": "https://oilprice.com/rss",
+        "entries": []
+    },
+    "Rigzone": {
+        "feed_title": "No title available",
+        "feed_url": "https://www.rigzone.com/rss/news",
+        "entries": []
+    },
+    "EIA (U.S. Energy Information Administration)": {
+        "feed_title": "No title available",
+        "feed_url": "https://www.eia.gov/rss/news.xml",
+        "entries": []
+    },
+    "U.S. Department of Energy": {
+        "feed_title": "Department of Energy",
+        "feed_url": "https://www.energy.gov/rss.xml",
+        "entries": [
+            {
+                "title": "Solar Achievements Timeline",
+                "link": "https://www.energy.gov/eere/solar/solar-achievements-timeline",
+                "summary": "<span class=\"field field--string field--title\">Solar Achievements Timeline</span>\n\n<span class=\"field field--author field--uid\" rel=\"schema:author\"><span lang=\"lang\">jason.kardell@…</span></span>\n\n<span class=\"field field--timestamp field--created\"><time datetime=\"2020-06-10T10:34:23-04:00\" title=\"Wednesday, June 10, 2020 - 10:34\">June 10, 2020</time>\n</span>\n\n\n\n\n\n\n<section class=\"layout blade-section--boxed\">\n\n    <div class=\"grid-container\">\n      <div class=\"blade-color \">\n                                      <div class=\"grid-row\">\n                  <div class=\"grid-col\">\n      \n\n<div class=\"block block-layout-builder block-inline-blockbasic\">\n        \n    \n          \n\n            <div class=\"field field--text_default field--body field field--name-body field--type-text-with-summary field--label-hidden field__item\"><p>In 2011, the U.S. Department of Energy's (DOE) Solar Energy Technologies Office (SETO) was tasked with achieving the goals of the SunShot Initiative: to drive down the cost of solar electricity to be fully cost-competitive with traditional energy sources by the end of the decade.</p><p>SunShot builds on a tradition of steady collaboration between DOE's Energy Efficiency and Renewable Energy program and solar industry pioneers. More than half of all solar cell efficiency records have been directly funded by SETO and 30% of all patents in the solar energy field are linked to patents attributable to the DOE. In fact, without the Energy Department's involvement, the average solar photovoltaic (PV) module production cost per watt would have been $5.27 in 2008 rather than $1.92. DOE research and development efforts have&nbsp;<a href=\"https://www.energy.gov/eere/analysis/articles/retrospective-benefit-cost-evaluation-doe-investments-photovoltaic-energy\">accelerated solar industry progress by an estimated 12 years</a>.</p><p>This timeline features the key innovations that have advanced the solar industry in the United States. Learn more about these key events from 1955 to present.&nbsp;&nbsp;</p></div>\n      \n            </div>\n\n\n\n<div class=\"block block-layout-builder block-inline-blockmedia\">\n            \n            \n                          \n\n            <div class=\"field field--entity_reference_entity_view field--field_media field field--name-field-media field--type-entity-reference field--label-hidden field__item\">\n<div>\n  \n<div class=\"timeline\" id=\"timeline-embed--232273\"></div>\n\n</div>\n</div>\n      \n                    \n      </div>\n\n    </div>\n  \n        </div>\n            </div>\n    </div>\n  </section>"
+            },
+            {
+                "title": "Building America Timeline",
+                "link": "https://www.energy.gov/eere/buildings/building-america-timeline",
+                "summary": "<span class=\"field field--string field--title\">Building America Timeline</span>\n\n<span class=\"field field--author field--uid\" rel=\"schema:author\"><span lang=\"lang\">monica.arevalo…</span></span>\n\n<span class=\"field field--timestamp field--created\"><time datetime=\"2020-03-16T18:30:46-04:00\" title=\"Monday, March 16, 2020 - 18:30\">March 16, 2020</time>\n</span>\n\n\n\n\n\n\n<section class=\"layout blade-section--boxed\">\n\n    <div class=\"grid-container\">\n      <div class=\"blade-color \">\n                                      <div class=\"grid-row\">\n                  <div class=\"grid-col\">\n      \n\n\n<div class=\"block block-layout-builder block-inline-blockmedia\">\n            \n            \n                          \n\n            <div class=\"field field--entity_reference_entity_view field--field_media field field--name-field-media field--type-entity-reference field--label-hidden field__item\">\n<div>\n  \n<div class=\"timeline\" id=\"timeline-embed--232275\"></div>\n\n</div>\n</div>\n      \n                    \n      </div>\n\n    </div>\n  \n        </div>\n            </div>\n    </div>\n  </section>"
+            },
+            {
+                "title": "A Timeline of RTG and RHU Space Missions",
+                "link": "https://www.energy.gov/ne/timeline-rtg-and-rhu-space-missions",
+                "summary": "<span class=\"field field--string field--title\">A Timeline of RTG and RHU Space Missions</span>\n\n<span class=\"field field--author field--uid\" rel=\"schema:author\"><span lang=\"lang\">Rahlana.Smith@…</span></span>\n\n<span class=\"field field--timestamp field--created\"><time datetime=\"2019-10-02T12:43:59-04:00\" title=\"Wednesday, October 2, 2019 - 12:43\">October 2, 2019</time>\n</span>\n\n\n\n\n\n\n<section class=\"layout blade-section--boxed\">\n\n    <div class=\"grid-container\">\n      <div class=\"blade-color \">\n                                      <div class=\"grid-row\">\n                  <div class=\"grid-col\">\n      \n\n\n<div class=\"block block-layout-builder block-inline-blockmedia\">\n            \n            \n                          \n\n            <div class=\"field field--entity_reference_entity_view field--field_media field field--name-field-media field--type-entity-reference field--label-hidden field__item\">\n<div>\n  \n<div class=\"timeline\" id=\"timeline-embed--232279\"></div>\n\n</div>\n</div>\n      \n                    \n      </div>\n\n    </div>\n  \n        </div>\n            </div>\n    </div>\n  </section>"
+            },
+            {
+                "title": "Savannah River Site History 1990-Present",
+                "link": "https://www.energy.gov/srs/savannah-river-site-history-1990-present",
+                "summary": "<span class=\"field field--string field--title\">Savannah River Site History 1990-Present</span>\n\n<span class=\"field field--author field--uid\" rel=\"schema:author\"><span lang=\"lang\">cameron.brazie…</span></span>\n\n<span class=\"field field--timestamp field--created\"><time datetime=\"2019-03-05T13:01:20-05:00\" title=\"Tuesday, March 5, 2019 - 13:01\">March 5, 2019</time>\n</span>\n\n\n\n\n\n\n<section class=\"layout blade-section--boxed\">\n\n    <div class=\"grid-container\">\n      <div class=\"blade-color \">\n                                      <div class=\"grid-row\">\n                  <div class=\"grid-col\">\n      \n\n<div class=\"block block-layout-builder block-inline-blockbasic\">\n        \n    \n          \n\n            <div class=\"field field--text_default field--body field field--name-body field--type-text-with-summary field--label-hidden field__item\"><p>The Savannah River Site&nbsp;was constructed during the early 1950s to produce the basic materials used in the fabrication of nuclear weapons, primarily tritium and plutonium-239, in support of our nation's defense programs.&nbsp;Five reactors were built to produce these materials. Also built were a number of support facilities including two chemical separations plants, a heavy water extraction plant, a nuclear fuel and target fabrication facility, a tritium extraction facility and waste management facilities.</p></div>\n      \n            </div>\n\n\n\n<div class=\"block block-layout-builder block-inline-blockmedia\">\n            \n            \n                          \n\n            <div class=\"field field--entity_reference_entity_view field--field_media field field--name-field-media field--type-entity-reference field--label-hidden field__item\">\n<div>\n  \n<div class=\"timeline\" id=\"timeline-embed--232266\"></div>\n\n</div>\n</div>\n      \n                    \n      </div>\n\n    </div>\n  \n        </div>\n            </div>\n    </div>\n  </section>"
+            },
+            {
+                "title": "Savannah River Site History 1950-1989",
+                "link": "https://www.energy.gov/srs/savannah-river-site-history-1950-1989",
+                "summary": "<span class=\"field field--string field--title\">Savannah River Site History 1950-1989</span>\n\n<span class=\"field field--author field--uid\" rel=\"schema:author\"><span lang=\"lang\">maura.long@hq…</span></span>\n\n<span class=\"field field--timestamp field--created\"><time datetime=\"2018-11-09T14:15:02-05:00\" title=\"Friday, November 9, 2018 - 14:15\">November 9, 2018</time>\n</span>\n\n\n\n\n\n\n<section class=\"layout blade-section--boxed\">\n\n    <div class=\"grid-container\">\n      <div class=\"blade-color \">\n                                      <div class=\"grid-row\">\n                  <div class=\"grid-col\">\n      \n\n<div class=\"block block-layout-builder block-inline-blockbasic\">\n        \n    \n          \n\n            <div class=\"field field--text_default field--body field field--name-body field--type-text-with-summary field--label-hidden field__item\"><p>The Savannah River Site&nbsp;was constructed during the early 1950s to produce the basic materials used in the fabrication of nuclear weapons, primarily tritium and plutonium-239, in support of our nation's defense programs.&nbsp;Five reactors were built to produce these materials. Also built were a number of support facilities including two chemical separations plants, a heavy water extraction plant, a nuclear fuel and target fabrication facility, a tritium extraction facility and waste management facilities.</p></div>\n      \n            </div>\n\n\n\n<div class=\"block block-layout-builder block-inline-blockmedia\">\n            \n            \n                          \n\n            <div class=\"field field--entity_reference_entity_view field--field_media field field--name-field-media field--type-entity-reference field--label-hidden field__item\">\n<div>\n  \n<div class=\"timeline\" id=\"timeline-embed--232270\"></div>\n\n</div>\n</div>\n      \n                    \n      </div>\n\n    </div>\n  \n        </div>\n            </div>\n    </div>\n  </section>"
+            }
+        ]
+    },
+    "EPA News": {
+        "feed_title": "No title available",
+        "feed_url": "https://www.epa.gov/rss/epa-news.xml",
+        "entries": []
+    },
+    "Offshore Energy.biz": {
+        "feed_title": "Offshore Energy",
+        "feed_url": "https://www.offshore-energy.biz/feed/",
+        "entries": [
+            {
+                "title": "Seaspan wraps up inaugural ship-to-ship LNG bunkering in Canada",
+                "link": "https://www.offshore-energy.biz/seaspan-wraps-up-inaugural-ship-to-ship-lng-bunkering-in-canada/",
+                "summary": "<p>Canadian shipowner Seaspan has hit a new milestone with the completion of the first ship-to-ship LNG bunkering in the Port of Vancouver in Canada.</p>\n<p>The post <a href=\"https://www.offshore-energy.biz/seaspan-wraps-up-inaugural-ship-to-ship-lng-bunkering-in-canada/\">Seaspan wraps up inaugural ship-to-ship LNG bunkering in Canada</a> appeared first on <a href=\"https://www.offshore-energy.biz\">Offshore Energy</a>.</p>"
+            },
+            {
+                "title": "Multi-billion projects at stake: Another blow for UK’s largest untapped oil & gas duo but Shell, Equinor, and Ithaca remain upbeat",
+                "link": "https://www.offshore-energy.biz/multi-billion-projects-at-stake-another-blow-for-uks-largest-untapped-oil-gas-duo-but-shell-equinor-and-ithaca-remain-upbeat/",
+                "summary": "<p>Which side will come on top is not yet clear, but it is unlikely that either will throw in the towel at this late stage in the UK’s oil and gas saga without a fight.</p>\n<p>The post <a href=\"https://www.offshore-energy.biz/multi-billion-projects-at-stake-another-blow-for-uks-largest-untapped-oil-gas-duo-but-shell-equinor-and-ithaca-remain-upbeat/\">Multi-billion projects at stake: Another blow for UK’s largest untapped oil &amp; gas duo but Shell, Equinor, and Ithaca remain upbeat</a> appeared first on <a href=\"https://www.offshore-energy.biz\">Offshore Energy</a>.</p>"
+            },
+            {
+                "title": "With final say on arbitration due by August-end, Chevron readying for ‘prompt close’ of Hess merger in 2025",
+                "link": "https://www.offshore-energy.biz/with-final-say-on-arbitration-due-by-august-end-chevron-readying-for-prompt-close-of-hess-merger-in-2025/",
+                "summary": "<p>Chevron is confident that its rival, Hess Corporation, will emerge as the winner in the ongoing arbitration proceedings the remaining Stabroek block partners launched over the sale of interests in assets off the coast of Guyana. </p>\n<p>The post <a href=\"https://www.offshore-energy.biz/with-final-say-on-arbitration-due-by-august-end-chevron-readying-for-prompt-close-of-hess-merger-in-2025/\">With final say on arbitration due by August-end, Chevron readying for ‘prompt close’ of Hess merger in 2025</a> appeared first on <a href=\"https://www.offshore-energy.biz\">Offshore Energy</a>.</p>"
+            },
+            {
+                "title": "Ripe for return: As Red Sea tensions subside, Suez Canal prepares for ‘full-scale’ revival",
+                "link": "https://www.offshore-energy.biz/ripe-for-return-as-red-sea-tensions-subside-suez-canal-prepares-for-full-scale-revival/",
+                "summary": "<p>With security in the Red Sea gradually improving, the Suez Canal is gearing up [&#8230;]</p>\n<p>The post <a href=\"https://www.offshore-energy.biz/ripe-for-return-as-red-sea-tensions-subside-suez-canal-prepares-for-full-scale-revival/\">Ripe for return: As Red Sea tensions subside, Suez Canal prepares for &#8216;full-scale&#8217; revival</a> appeared first on <a href=\"https://www.offshore-energy.biz\">Offshore Energy</a>.</p>"
+            },
+            {
+                "title": "Samsung E&A secures $1.7 billion deal to build UAE’s first methanol plant",
+                "link": "https://www.offshore-energy.biz/samsung-ea-secures-1-7-billion-deal-to-build-uaes-first-methanol-plant/",
+                "summary": "<p>TA'ZIZ awarded an engineering, procurement, and construction (EPC) contract worth $1.7 billion to Samsung E&#38;A for UAE's first methanol plant.</p>\n<p>The post <a href=\"https://www.offshore-energy.biz/samsung-ea-secures-1-7-billion-deal-to-build-uaes-first-methanol-plant/\">Samsung E&amp;A secures $1.7 billion deal to build UAE&#8217;s first methanol plant</a> appeared first on <a href=\"https://www.offshore-energy.biz\">Offshore Energy</a>.</p>"
+            }
+        ]
+    },
+    "Energy Voice": {
+        "feed_title": "Energy Voice",
+        "feed_url": "https://www.energyvoice.com/feed/",
+        "entries": [
+            {
+                "title": "Is net zero also a threat to UK democracy?",
+                "link": "https://www.energyvoice.com/insights/energy-opinion/566074/is-net-zero-also-a-threat-to-uk-democracy/",
+                "summary": "<p>I’ve said this before and while not a Nobel Prize standard observation, it makes sense that if politicians can’t carry the people with them then they really need a rethink.</p>\n<p>The post <a href=\"https://www.energyvoice.com/insights/energy-opinion/566074/is-net-zero-also-a-threat-to-uk-democracy/\" rel=\"nofollow\">Is net zero also a threat to UK democracy?</a> appeared first on <a href=\"https://www.energyvoice.com\" rel=\"nofollow\">Energy Voice</a>.</p>"
+            },
+            {
+                "title": "‘Clean power by 2030’: net-zero targets versus common sense",
+                "link": "https://www.energyvoice.com/insights/energy-opinion/566198/clean-power-by-2030-net-zero-targets-versus-common-sense/",
+                "summary": "<p>It was bad luck for Ed Miliband that his appearance before the House of Commons Environmental Audit Committee fell on the same day that a report by Cornwall Insight predicted the UK would fall 32GW short of his ‘clean power by 2030’ target.</p>\n<p>The post <a href=\"https://www.energyvoice.com/insights/energy-opinion/566198/clean-power-by-2030-net-zero-targets-versus-common-sense/\" rel=\"nofollow\">&#8216;Clean power by 2030&#8217;: net-zero targets versus common sense</a> appeared first on <a href=\"https://www.energyvoice.com\" rel=\"nofollow\">Energy Voice</a>.</p>"
+            },
+            {
+                "title": "National Grid scores SF6 UK-first at London Power Tunnels project",
+                "link": "https://www.energyvoice.com/renewables-energy-transition/566042/national-grid-scores-sf6-uk-first-at-london-power-tunnels-project/",
+                "summary": "<p>The UK's National Grid has reached a milestone in its programme to eliminate sulphur hexafluoride (SF6) from its network with the arrival of the first of two 178 tonne supergrid transformers and Hitachi Econiq SF6-free switchgear, at a new electricity substation being built in the UK capital.</p>\n<p>The post <a href=\"https://www.energyvoice.com/renewables-energy-transition/566042/national-grid-scores-sf6-uk-first-at-london-power-tunnels-project/\" rel=\"nofollow\">National Grid scores SF6 UK-first at London Power Tunnels project</a> appeared first on <a href=\"https://www.energyvoice.com\" rel=\"nofollow\">Energy Voice</a>.</p>"
+            },
+            {
+                "title": "Steel and chemical producers warn UK industry minister against ‘deindustrialisation’",
+                "link": "https://www.energyvoice.com/renewables-energy-transition/566491/steel-warn-against-deindustrialisation/",
+                "summary": "<p> Industry warns energy costs in the UK are among the highest in Europe, Asia, or the US due to net zero policies</p>\n<p>The post <a href=\"https://www.energyvoice.com/renewables-energy-transition/566491/steel-warn-against-deindustrialisation/\" rel=\"nofollow\">Steel and chemical producers warn UK industry minister against &#8216;deindustrialisation&#8217;</a> appeared first on <a href=\"https://www.energyvoice.com\" rel=\"nofollow\">Energy Voice</a>.</p>"
+            },
+            {
+                "title": "Aberdeen’s Centurion confirms $100m acquisition ‘firepower’ fund",
+                "link": "https://www.energyvoice.com/markets/energy-finance/566472/aberdeens-centurion-100m-acquisition-firepower/",
+                "summary": "<p>Aberdeen-based Centurion Group revealed it has $100 million (£81m) to spend on continuing its acquisition streak this year after a consortium of lenders boosted its credit facilities.</p>\n<p>The post <a href=\"https://www.energyvoice.com/markets/energy-finance/566472/aberdeens-centurion-100m-acquisition-firepower/\" rel=\"nofollow\">Aberdeen&#8217;s Centurion confirms $100m acquisition &#8216;firepower&#8217; fund</a> appeared first on <a href=\"https://www.energyvoice.com\" rel=\"nofollow\">Energy Voice</a>.</p>"
+            }
+        ]
+    },
+    "DOAJ (Directory of Open Access Journals)": {
+        "feed_title": "DOAJ Recent Journals Added",
+        "feed_url": "https://doaj.org/feed",
+        "entries": [
+            {
+                "title": "Australian & International Journal of Rural Education (1839-7387)",
+                "link": "https://doaj.org/toc/1839-7387?rss",
+                "summary": "Published by Society for the Provision of Education in Rural Australia\nAdded to DOAJ on  3 Feb 2025\nLCC Subject Category: Education: Special aspects of education"
+            },
+            {
+                "title": "المجلة الدولية لعلوم المكتبات والمعلومات (2356-8003, 2735-3931)",
+                "link": "https://doaj.org/toc/2735-3931?rss",
+                "summary": "Published by Egyptian Libraries Association\nAdded to DOAJ on  3 Feb 2025\nLCC Subject Category: Bibliography. Library science. Information resources"
+            },
+            {
+                "title": "Business Analyst (0973-211X, 2754-6721)",
+                "link": "https://doaj.org/toc/2754-6721?rss",
+                "summary": "Published by Emerald Publishing in Shri Ram College of Commerce, University of Delhi\nAdded to DOAJ on  3 Feb 2025\nLCC Subject Category: Social Sciences: Commerce: Business | Social Sciences: Finance"
+            },
+            {
+                "title": "Medeniyet Medical Journal (2149-2042, 2149-4606)",
+                "link": "https://doaj.org/toc/2149-4606?rss",
+                "summary": "Published by Galenos Publishing House in Istanbul Medeniyet University\nAdded to DOAJ on 21 Jan 2025\nLCC Subject Category: Medicine"
+            },
+            {
+                "title": "Sospol: Jurnal Sosial Politik (2088-8090, 2597-6648)",
+                "link": "https://doaj.org/toc/2597-6648?rss",
+                "summary": "Published by University of Muhammadiyah Malang\nAdded to DOAJ on  1 Feb 2025\nLCC Subject Category: Political science: Political institutions and public administration (General)"
+            }
+        ]
+    },
+    "UK Oil & Gas Authority": {
+        "feed_title": "No title available",
+        "feed_url": "https://www.ogauthority.co.uk/feed",
+        "entries": []
+    },
+    "World Energy Council": {
+        "feed_title": "No title available",
+        "feed_url": "https://www.worldenergy.org/rss",
+        "entries": []
+    }
+}

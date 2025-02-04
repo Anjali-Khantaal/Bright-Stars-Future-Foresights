@@ -1,0 +1,51 @@
+[
+  {
+    "title": "Sharp asymptotics for the free energy of 1+1 dimensional directed\n  polymers in an infinitely divisible environment",
+    "authors": [
+      "Frederique Watbled"
+    ],
+    "summary": "We give sharp estimate for the free energy of directed polymers in random\nenvironment in dimension 1+1. This estimate was known for a Gaussian\nenvironment, we extend it to the case where the law of the environment is\ninfinitely divisible.",
+    "published": "2012-08-05T15:37:53Z",
+    "link": "http://arxiv.org/abs/1208.1024v2"
+  },
+  {
+    "title": "Energy-efficient Path Planning for Ground Robots by Combining Air and\n  Ground Measurements",
+    "authors": [
+      "Minghan Wei",
+      "Volkan Isler"
+    ],
+    "summary": "As mobile robots find increasing use in outdoor applications, designing\nenergy-efficient robot navigation algorithms is gaining importance. There are\ntwo primary approaches to energy efficient navigation: Offline approaches rely\non a previously built energy map as input to a path planner. Obtaining energy\nmaps for large environments is challenging. Alternatively, the robot can\nnavigate in an online fashion and build the map as it navigates. Online\nnavigation in unknown environments with only local information is still a\nchallenging research problem. In this paper, we present a novel approach which\naddresses both of these challenges. Our approach starts with a segmented aerial\nimage of the environment. We show that a coarse energy map can be built from\nthe segmentation. However, the absolute energy value for a specific terrain\ntype (e.g. grass) can vary across environments. Therefore, rather than using\nthis energy map directly, we use it to build the covariance function for a\nGaussian Process (GP) based representation of the environment. In the online\nphase, energy measurements collected during navigation are used for estimating\nenergy profiles across the environment using GP regression. Coupled with an\nA*-like navigation algorithm, we show in simulations that our approach\noutperforms representative baseline approaches. We also present results from\nfield experiments which demonstrate the practical applicability of our method.",
+    "published": "2019-07-15T05:44:38Z",
+    "link": "http://arxiv.org/abs/1907.06337v1"
+  },
+  {
+    "title": "Gravity at Work: How the Build-Up of Environments Shape Galaxy\n  Properties",
+    "authors": [
+      "Sadegh Khochfar"
+    ],
+    "summary": "We present results on the heating of the inter-cluster medium (ICM) by\ngravitational potential energy from in-falling satellites. We calculate the\navailable excess energy of baryons once they are stripped from their satellite\nand added to the ICM of the hosting environment. this excess energy is a strong\nfunction of environment and we find that it can exceed the contribution from\nAGNs or supernovae (SN) by up to two orders of magnitude in the densest\nenvironments/haloes. Cooling by radiative losses is in general fully\ncompensated by gravitational heating in massive groups and clusters with hot\ngas temperature > 1 keV. The reason for the strong environment dependence is\nthe continued infall of substructure onto dense environments during their\nformation in contrast to field-like environments. We show that gravitational\nheating is able to reduce the number of too luminous galaxies in models and to\nproduce model luminosity functions in agreement with observations.",
+    "published": "2011-01-11T08:27:01Z",
+    "link": "http://arxiv.org/abs/1101.2062v1"
+  },
+  {
+    "title": "Dynamics of relativistic radio jets in asymmetric environments",
+    "authors": [
+      "Patrick M. Yates-Jones",
+      "Stanislav S. Shabala",
+      "Martin G. H. Krause"
+    ],
+    "summary": "We have carried out relativistic three-dimensional simulations of high-power\nradio sources propagating into asymmetric cluster environments. We offset the\nenvironment by 0 or 1 core radii (equal to 144 kpc), and incline the jets by 0,\n15, or 45{\\deg} away from the environment centre. The different environment\nencountered by each radio lobe provides a unique opportunity to study the\neffect of environment on otherwise identical jets. We find that the jets become\nunstable towards the end of the simulations, even with a Lorentz factor of 5;\nthey nevertheless develop typical FR II radio morphology. The jets propagating\ninto denser environments have consistently shorter lobe lengths and brighter\nhotspots, while the axial ratio of the two lobes is similar. We reproduce the\nrecently reported observational anti-correlation between lobe length asymmetry\nand environment asymmetry, corroborating the notion that observed large-scale\nradio lobe asymmetry can be driven by differences in the underlying\nenvironment.",
+    "published": "2021-10-07T03:33:10Z",
+    "link": "http://arxiv.org/abs/2110.03162v1"
+  },
+  {
+    "title": "Quantum master equation for a system influencing its environment (letter\n  version)",
+    "authors": [
+      "Massimiliano Esposito",
+      "Pierre Gaspard"
+    ],
+    "summary": "We derive a new perturbative quantum master equation for the reduced density\nmatrix of a system interacting with an environment (with a dense spectrum of\nenergy levels). The total system energy (system plus environment) is constant\nand finite. This equation takes into account the finite energy effects of the\nenvironment due to the total energy conservation. This equation is more general\nthan the common perturbative equations used for describing a system in\ninteraction with an environment (like the Redfield equation or the\nCohen-Tannoudji one) because these last equations can be deduced from it in the\nlimit of an infinitely large environment. We apply numerically this equation to\nthe spin-GORM model. This model represents the interaction of a two-level\nsystem with an environment described by random matrices. We compare our\nequation with the exact von Neumann equation of the total system and show its\nsuperiority compared to the Redfield equation (in the Markovian and\nnon-Markovian cases).",
+    "published": "2003-08-07T16:20:31Z",
+    "link": "http://arxiv.org/abs/cond-mat/0308144v2"
+  }
+]
