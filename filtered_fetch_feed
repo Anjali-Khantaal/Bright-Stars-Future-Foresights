@@ -1,0 +1,108 @@
+#!/usr/bin/env python3
+import feedparser
+import json
+import requests
+from bs4 import BeautifulSoup
+import re
+import time
+
+# Keywords related to new and emerging oil & gas technologies
+TECHNOLOGY_KEYWORDS = [
+    "technology", "innovation", "AI", "machine learning", "automation",
+    "robotics", "digital transformation", "IoT", "sustainability",
+    "carbon capture", "renewable energy", "hydrogen", "blockchain",
+    "drilling automation", "predictive maintenance", "smart oil fields"
+]
+
+def fetch_feed(feed_name, feed_url, max_entries=5):
+    """Fetches feed data and filters relevant articles."""
+    print(f"Fetching feed: {feed_name} ({feed_url})")
+    feed = feedparser.parse(feed_url)
+
+    if feed.bozo:
+        print(f"Warning: Error parsing feed: {feed.bozo_exception}")
+
+    feed_data = {
+        "feed_title": feed.feed.get("title", "No title available"),
+        "feed_url": feed_url,
+        "entries": []
+    }
+
+    for entry in feed.entries[:max_entries]:
+        title = entry.get("title", "No title")
+        link = entry.get("link", "No link")
+        summary = entry.get("summary", "No summary available")
+
+        # Check if the article is relevant based on keywords
+        if any(keyword.lower() in (title + summary).lower() for keyword in TECHNOLOGY_KEYWORDS):
+            # Try to fetch full article text
+            full_text = extract_full_text(link) if link != "No link" else "Full text unavailable"
+
+            entry_data = {
+                "title": title,
+                "link": link,
+                "summary": summary,
+                "full_text": full_text
+            }
+            feed_data["entries"].append(entry_data)
+    
+    return feed_data
+
+def extract_full_text(url):
+    """Scrapes and extracts the full text of an article."""
+    try:
+        headers = {'User-Agent': 'Mozilla/5.0'}
+        response = requests.get(url, headers=headers, timeout=5)
+
+        if response.status_code != 200:
+            return "Error: Unable to fetch article"
+
+        soup = BeautifulSoup(response.text, 'html.parser')
+
+        # Extract the main text content based on common HTML tags
+        paragraphs = soup.find_all('p')
+        article_text = "\n".join(p.get_text() for p in paragraphs)
+
+        # Clean up the text
+        article_text = re.sub(r'\s+', ' ', article_text).strip()
+
+        # Limit to first 1000 characters to avoid excessive storage
+        return article_text[:1000] + "..." if len(article_text) > 1000 else article_text
+
+    except Exception as e:
+        return f"Error extracting text: {e}"
+
+def main():
+    feeds = {
+        "Reuters Commodities": "http://feeds.reuters.com/reuters/commoditiesNews",
+        "OilPrice": "https://oilprice.com/rss",
+        "Rigzone": "https://www.rigzone.com/rss/news",
+        "EIA (U.S. Energy Information Administration)": "https://www.eia.gov/rss/news.xml",
+        "U.S. Department of Energy": "https://www.energy.gov/rss.xml",
+        "EPA News": "https://www.epa.gov/rss/epa-news.xml",
+        "Offshore Energy.biz": "https://www.offshore-energy.biz/feed/",
+        "Energy Voice": "https://www.energyvoice.com/feed/",
+        "DOAJ (Directory of Open Access Journals)": "https://doaj.org/feed",
+        "UK Oil & Gas Authority": "https://www.ogauthority.co.uk/feed",
+        "World Energy Council": "https://www.worldenergy.org/rss"
+    }
+    
+    all_feed_data = {}
+
+    for name, url in feeds.items():
+        feed_data = fetch_feed(name, url)
+        if feed_data["entries"]:
+            all_feed_data[name] = feed_data
+        print("-" * 80)
+        time.sleep(2)  # Avoid too many requests in a short time
+
+    json_filename = "oil_gas_tech_feed.json"
+    try:
+        with open(json_filename, "w", encoding="utf-8") as json_file:
+            json.dump(all_feed_data, json_file, ensure_ascii=False, indent=4)
+        print(f"\nAll relevant feed data has been saved to {json_filename}")
+    except Exception as e:
+        print(f"Error writing JSON file: {e}")
+
+if __name__ == "__main__":
+    main()
