@@ -5,17 +5,96 @@ import requests
 from bs4 import BeautifulSoup
 import re
 import time
+from datetime import datetime, timedelta
+
+# Set how many days old articles should be
+DAYS_LIMIT = 7  # Change this if you want a different time range
 
 # Keywords related to new and emerging oil & gas technologies
 TECHNOLOGY_KEYWORDS = [
-    "oil", "gas", "petroleum", "technology", "innovation", "AI", "machine learning", "automation",
+    # General Oil & Gas Industry Terms
+    "oil", "gas", "petroleum",
+
+    # Digital Transformation & Automation
+    "technology", "innovation", "AI", "machine learning", "automation",
     "robotics", "digital transformation", "IoT", "sustainability",
-    "carbon capture", "renewable energy", "hydrogen", "blockchain",
-    "drilling automation", "predictive maintenance", "smart oil fields"
+    "digital twin", "predictive analytics", "edge computing", "cloud computing",
+    "industrial IoT", "big data analytics", "cybersecurity in oil & gas",
+    "SCADA", "remote monitoring", "5G in oil & gas", "AI-driven optimization",
+    "process automation", "digital oilfield", "smart sensors", "machine vision",
+
+    # AI & Machine Learning Applications
+    "AI-assisted drilling", "AI in reservoir simulation", "reinforcement learning in drilling",
+    "predictive maintenance AI", "autonomous drilling", "AI-powered seismic interpretation",
+    "cognitive computing in exploration", "deep learning for oilfield analytics",
+    "AI-based pipeline monitoring", "LLM", "LLMs in oil and gas",
+
+    # Robotics & Advanced Machinery
+    "autonomous underwater vehicles", "remotely operated vehicles", "AI-driven inspection robots",
+    "self-healing pipelines", "automated drilling rigs", "drone inspections in oil & gas",
+    "smart drilling", "digital roughnecks", "robotic well intervention", "robotic refinery maintenance",
+
+    # Energy Transition & Carbon Management
+    "carbon capture", "carbon utilization", "carbon storage", "carbon sequestration",
+    "direct air capture", "low-carbon hydrogen", "blue hydrogen", "green hydrogen",
+    "hydrogen blending in pipelines", "carbon footprint reduction", "carbon intensity reduction",
+    "methane detection", "methane emissions monitoring", "flare gas recovery",
+    "renewable natural gas", "decarbonization strategies", "biofuels in oil & gas",
+    "CO₂ injection", "net-zero emissions", "sustainable drilling",
+
+    # Enhanced Oil Recovery (EOR) Technologies
+    "chemical EOR", "thermal EOR", "microbial EOR", "CO₂ EOR", "nanotechnology in EOR",
+    "gas injection EOR", "smart water flooding", "surfactant-polymer flooding",
+    "smart tracers in EOR", "low-salinity water injection",
+
+    # Subsurface & Seismic Innovations
+    "subsurface imaging", "AI-assisted seismic processing", "fiber optic sensing",
+    "seismic inversion", "distributed acoustic sensing", "4D seismic analysis",
+    "electromagnetic exploration", "seismic reflection tomography", "microseismic monitoring",
+    "seismic while drilling", "AI-based reservoir modeling",
+
+    # Drilling & Well Technologies
+    "drilling automation", "automated drilling control", "managed pressure drilling",
+    "intelligent completions", "smart well technology", "rotary steerable systems",
+    "logging while drilling", "measurement while drilling", "wellbore stability analysis",
+    "digital drilling fluids", "expandable tubulars", "real-time downhole monitoring",
+    "casing drilling technology", "high-temperature drilling tools",
+
+    # Pipeline & Refinery Innovations
+    "AI-driven pipeline monitoring", "smart pipeline coatings", "leak detection systems",
+    "pipeline integrity management", "hydrogen pipeline transport", "pipeline pigging technology",
+    "AI-based predictive pipeline maintenance", "refinery digitalization",
+    "advanced catalyst development", "renewable refining technologies",
+
+    # Offshore & Deepwater Technologies
+    "subsea production systems", "floating LNG", "offshore wind integration with oil & gas",
+    "deepwater drilling automation", "AI-driven FPSO monitoring", "subsea robotics",
+    "autonomous underwater monitoring", "digital twin for offshore platforms",
+    "subsea factory concept", "autonomous tanker loading",
+
+    # Emerging Materials & Nanotechnology
+    "nanomaterials in oil recovery", "smart drilling fluids", "self-healing materials",
+    "graphene-based sensors", "smart coatings for pipelines", "high-temperature superconductors",
+    "nano-enhanced lubricants", "superhydrophobic coatings for pipelines",
+
+    # Alternative & Hybrid Energy Sources
+    "gas-to-liquids", "power-to-gas", "synthetic fuels", "hybrid energy systems in oilfields",
+    "enhanced geothermal systems", "hydrogen-powered drilling", "floating solar in oilfields",
+    "renewable diesel", "bio-refineries in oil & gas", "AI-driven energy storage optimization",
+
+    # Advanced Computing Technologies
+    "quantum computing",
+
+    # Top 25 Global Oil Companies
+    "Saudi Aramco", "ExxonMobil", "Chevron", "Shell", "PetroChina", "TotalEnergies",
+    "BP", "Sinopec", "Gazprom", "ConocoPhillips", "Rosneft", "Eni", "Equinor",
+    "Phillips 66", "Valero Energy", "Marathon Petroleum", "Petrobras", "Lukoil",
+    "Occidental Petroleum", "Repsol", "Devon Energy", "Hess Corporation", "OMV",
+    "CNOOC", "Canadian Natural Resources"
 ]
 
-def fetch_feed(feed_name, feed_url, max_entries=5):
-    """Fetches feed data and filters relevant articles."""
+def fetch_feed(feed_name, feed_url, max_entries=10):
+    """Fetches feed data, filters by keywords & publication date."""
     print(f"Fetching feed: {feed_name} ({feed_url})")
     feed = feedparser.parse(feed_url)
 
@@ -27,33 +106,47 @@ def fetch_feed(feed_name, feed_url, max_entries=5):
         "feed_url": feed_url,
         "entries": []
     }
-
-    keyword_pattern = re.compile(r'\b(?:' + '|'.join(re.escape(k) for k in TECHNOLOGY_KEYWORDS) + r')\b', re.IGNORECASE)
-
+    
+    # Define the cutoff date
+    cutoff_date = datetime.utcnow() - timedelta(days=DAYS_LIMIT)
+    
     for entry in feed.entries[:max_entries]:
         title = entry.get("title", "No title")
         link = entry.get("link", "No link")
         summary = entry.get("summary", "No summary available")
 
-        # Normalize text (convert to lowercase, remove extra spaces)
-        combined_text = f"{title} {summary}".lower()
+        # Extract and parse the publication date
+        try:
+            published_date = datetime(*entry.published_parsed[:6])  # Convert to datetime
+        except (AttributeError, TypeError):
+            print(f"Skipping article '{title}' (Missing date)")
+            continue  # Skip if there's no valid date
 
-        # Apply regex matching for better keyword detection
-        if keyword_pattern.search(combined_text):
-            full_text = extract_full_text(link) if link != "No link" else "Full text unavailable"
+        # Skip articles that are too old
+        if published_date < cutoff_date:
+            print(f"Skipping article '{title}' (Published: {published_date}) - Too old")
+            continue
+        
+        # Fetch full article text
+        full_text = extract_full_text(link) if link != "No link" else "Full text unavailable"
 
-            # Second check in full text to filter further
-            if keyword_pattern.search(full_text):
-                entry_data = {
-                    "title": title,
-                    "link": link,
-                    "summary": summary,
-                    "full_text": full_text
-                }
-                feed_data["entries"].append(entry_data)
+        # Combine title, summary, and full text for keyword filtering
+        clean_text = f"{title} {summary} {full_text}".lower()
+        clean_text = re.sub(r'\s+', ' ', clean_text)  # Normalize spaces
+
+        # Check if any keyword appears
+        if any(keyword.lower() in clean_text for keyword in TECHNOLOGY_KEYWORDS):
+            entry_data = {
+                "title": title,
+                "link": link,
+                "published_date": published_date.strftime("%Y-%m-%d %H:%M:%S"),
+                "summary": summary,
+                "full_text": full_text
+            }
+            feed_data["entries"].append(entry_data)
     
-    return feed_data
-
+    # Only return feed if it has relevant articles within the date range
+    return feed_data if feed_data["entries"] else None
 
 def extract_full_text(url):
     """Scrapes and extracts the full text of an article."""
@@ -70,12 +163,10 @@ def extract_full_text(url):
         paragraphs = soup.find_all('p')
         article_text = "\n".join(p.get_text() for p in paragraphs)
 
-        # Clean up the text
+        # Remove excessive whitespace and HTML artifacts
         article_text = re.sub(r'\s+', ' ', article_text).strip()
 
-        # Limit to first 1000 characters to avoid excessive storage
-        return article_text[:1000] + "..." if len(article_text) > 1000 else article_text
-
+        return article_text  # No character limit
     except Exception as e:
         return f"Error extracting text: {e}"
 
@@ -141,21 +232,31 @@ def main():
     }
     
     all_feed_data = {}
+    removed_feeds = []  # Track feeds that had no relevant articles
 
     for name, url in feeds.items():
         feed_data = fetch_feed(name, url)
-        if feed_data["entries"]:
+        if feed_data:  # Only keep feeds that contain relevant & recent articles
             all_feed_data[name] = feed_data
+        else:
+            removed_feeds.append(name)
+
         print("-" * 80)
         time.sleep(2)  # Avoid too many requests in a short time
 
+    # Print removed feeds for debugging
+    print("\nFeeds removed due to no recent or relevant articles:")
+    for removed in removed_feeds:
+        print(f"❌ {removed}")
+
+    # Save only relevant feeds to JSON
     json_filename = "oil_gas_tech_feed.json"
     try:
         with open(json_filename, "w", encoding="utf-8") as json_file:
             json.dump(all_feed_data, json_file, ensure_ascii=False, indent=4)
-        print(f"\nAll relevant feed data has been saved to {json_filename}")
+        print(f"\n✅ Saved only recent & relevant feeds to {json_filename}")
     except Exception as e:
-        print(f"Error writing JSON file: {e}")
+        print(f"❌ Error writing JSON file: {e}")
 
 if __name__ == "__main__":
     main()
