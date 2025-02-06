@@ -5,10 +5,10 @@ import requests
 from bs4 import BeautifulSoup
 import re
 import time
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 # Set how many days old articles should be
-DAYS_LIMIT = 7  # Change this if you want a different time range
+DAYS_LIMIT = 30  # Change this if you want a different time range
 
 # Keywords related to new and emerging oil & gas technologies
 TECHNOLOGY_KEYWORDS = [
@@ -96,7 +96,11 @@ TECHNOLOGY_KEYWORDS = [
 def fetch_feed(feed_name, feed_url, max_entries=10):
     """Fetches feed data, filters by keywords & publication date."""
     print(f"Fetching feed: {feed_name} ({feed_url})")
-    feed = feedparser.parse(feed_url)
+    try:
+        feed = feedparser.parse(feed_url)
+    except Exception as e:
+        print(f"Error fetching feed: {e}")
+        return None
 
     if feed.bozo:
         print(f"Warning: Error parsing feed: {feed.bozo_exception}")
@@ -108,7 +112,7 @@ def fetch_feed(feed_name, feed_url, max_entries=10):
     }
     
     # Define the cutoff date
-    cutoff_date = datetime.utcnow() - timedelta(days=DAYS_LIMIT)
+    cutoff_date = datetime.now(timezone.utc) - timedelta(days=DAYS_LIMIT)
     
     for entry in feed.entries[:max_entries]:
         title = entry.get("title", "No title")
@@ -117,7 +121,7 @@ def fetch_feed(feed_name, feed_url, max_entries=10):
 
         # Extract and parse the publication date
         try:
-            published_date = datetime(*entry.published_parsed[:6])  # Convert to datetime
+            published_date = datetime(*entry.published_parsed[:6], tzinfo=timezone.utc)  # Convert to datetime
         except (AttributeError, TypeError):
             print(f"Skipping article '{title}' (Missing date)")
             continue  # Skip if there's no valid date
@@ -228,7 +232,6 @@ def main():
         "Oil and Gas Investments" : "https://oilandgas-investments.com/feed/",
         "Yokogawa": "https://www.yokogawa.com/eu/blog/oil-gas/en/feed/",
         "Medium" : "https://medium.com/feed/deepstream-tech"
-
     }
     
     all_feed_data = {}
