@@ -8,7 +8,7 @@ import time
 
 # Keywords related to new and emerging oil & gas technologies
 TECHNOLOGY_KEYWORDS = [
-    "technology", "innovation", "AI", "machine learning", "automation",
+    "oil", "gas", "petroleum", "technology", "innovation", "AI", "machine learning", "automation",
     "robotics", "digital transformation", "IoT", "sustainability",
     "carbon capture", "renewable energy", "hydrogen", "blockchain",
     "drilling automation", "predictive maintenance", "smart oil fields"
@@ -104,6 +104,8 @@ def main():
         "Phys.org" : "https://phys.org/rss-feed/",
         "National Geographic" : "http://news.nationalgeographic.com/rss/index.rss",
         "WIRED" : "https://www.wired.com/feed",
+        "WIRED AI" : "https://www.wired.com/feed/tag/ai/latest/rss",
+        "WIRED Backchannel" : "https://www.wired.com/feed/category/backchannel/latest/rss",
         "Wall Street Journal" : "http://online.wsj.com/xml/rss/3_7455.xml",
         "Forbes" : "http://www.forbes.com/technology/feed/",
         "TIME" : "http://time.com/tech/feed/",
@@ -140,7 +142,10 @@ def main():
         "Oilfield Technology" : "https://www.oilfieldtechnology.com/rss/oilfieldtechnology.xml",
         "AOG Digital" : "https://aogdigital.com/news/latest?format=feed",
         "Adrian" : "http://adrianoil.blogspot.com/feeds/posts/default?alt=rss",
-        "Oil and Gas Investments" : "https://oilandgas-investments.com/feed/"
+        "Oil and Gas Investments" : "https://oilandgas-investments.com/feed/",
+        "Yokogawa": "https://www.yokogawa.com/eu/blog/oil-gas/en/feed/",
+        "Natural Gas Intelligence" : "https://www.naturalgasintel.com/rss/6/",
+        "Medium" : "https://medium.com/feed/deepstream-tech"
 
     }
     
