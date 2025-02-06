@@ -28,25 +28,32 @@ def fetch_feed(feed_name, feed_url, max_entries=5):
         "entries": []
     }
 
+    keyword_pattern = re.compile(r'\b(?:' + '|'.join(re.escape(k) for k in TECHNOLOGY_KEYWORDS) + r')\b', re.IGNORECASE)
+
     for entry in feed.entries[:max_entries]:
         title = entry.get("title", "No title")
         link = entry.get("link", "No link")
         summary = entry.get("summary", "No summary available")
 
-        # Check if the article is relevant based on keywords
-        if any(keyword.lower() in (title + summary).lower() for keyword in TECHNOLOGY_KEYWORDS):
-            # Try to fetch full article text
+        # Normalize text (convert to lowercase, remove extra spaces)
+        combined_text = f"{title} {summary}".lower()
+
+        # Apply regex matching for better keyword detection
+        if keyword_pattern.search(combined_text):
             full_text = extract_full_text(link) if link != "No link" else "Full text unavailable"
 
-            entry_data = {
-                "title": title,
-                "link": link,
-                "summary": summary,
-                "full_text": full_text
-            }
-            feed_data["entries"].append(entry_data)
+            # Second check in full text to filter further
+            if keyword_pattern.search(full_text):
+                entry_data = {
+                    "title": title,
+                    "link": link,
+                    "summary": summary,
+                    "full_text": full_text
+                }
+                feed_data["entries"].append(entry_data)
     
     return feed_data
+
 
 def extract_full_text(url):
     """Scrapes and extracts the full text of an article."""
@@ -76,7 +83,7 @@ def main():
     feeds = {
         "Reuters Commodities": "http://feeds.reuters.com/reuters/commoditiesNews",
         "OilPrice": "https://oilprice.com/rss",
-        "Rigzone": "https://www.rigzone.com/rss/news",
+        "Rigzone": "https://www.rigzone.com/news/rss/rigzone_latest.aspx",
         "EIA (U.S. Energy Information Administration)": "https://www.eia.gov/rss/news.xml",
         "U.S. Department of Energy": "https://www.energy.gov/rss.xml",
         "EPA News": "https://www.epa.gov/rss/epa-news.xml",
@@ -84,7 +91,57 @@ def main():
         "Energy Voice": "https://www.energyvoice.com/feed/",
         "DOAJ (Directory of Open Access Journals)": "https://doaj.org/feed",
         "UK Oil & Gas Authority": "https://www.ogauthority.co.uk/feed",
-        "World Energy Council": "https://www.worldenergy.org/rss"
+        "World Energy Council": "https://www.worldenergy.org/rss",
+        "ABC News" : "http://feeds.abcnews.com/abcnews/usheadlines",
+        "ABC News Tech" : "http://feeds.abcnews.com/abcnews/technologyheadlines",
+        "CNN" : "http://rss.cnn.com/rss/cnn_topstories.rss",
+        "Huffington Post" : "https://chaski.huffpost.com/us/auto/vertical/front-page",
+        "Mashable" : "http://mashable.com/us-world/rss/",
+        "NBC News" : "http://feeds.nbcnews.com/feeds/nbcpolitics",
+        "Scientific American Global" : "http://rss.sciam.com/ScientificAmerican-Global",
+        "NASA" : "https://www.nasa.gov/news-release/feed/",
+        "The Guardian" : "https://www.theguardian.com/science/rss",
+        "Phys.org" : "https://phys.org/rss-feed/",
+        "National Geographic" : "http://news.nationalgeographic.com/rss/index.rss",
+        "WIRED" : "https://www.wired.com/feed",
+        "Wall Street Journal" : "http://online.wsj.com/xml/rss/3_7455.xml",
+        "Forbes" : "http://www.forbes.com/technology/feed/",
+        "TIME" : "http://time.com/tech/feed/",
+        "Tech Insider" : "http://www.techinsider.io/rss",
+        "NYT: The Daily" : "https://feeds.simplecast.com/54nAGcIl",
+        "Smartless" : "https://feeds.simplecast.com/hNaFxXpO",
+        "NPR's Up first" : "https://feeds.npr.org/510318/podcast.xml",
+        "The New York Times" : "https://archive.nytimes.com/www.nytimes.com/services/xml/rss/index.html?mcubz=0",
+        "Fox News: Science" : "https://moxie.foxnews.com/google-publisher/science.xml",
+        "Fox News" : "https://moxie.foxnews.com/google-publisher/latest.xml",
+        "Fox News: Tech" : "https://moxie.foxnews.com/google-publisher/tech.xml",
+        "Chevron" : "https://www.chevron.com/newsroom/archive", 
+        "OPEC News" : "https://www.opec.org/opec_web/en/news.rss",
+        "Oil and Gas IQ" : "https://www.oilandgasiq.com/rss/articles",
+        "World Oil: Latest News" : "https://worldoil.com/rss?feed=news",
+        "World Oil: Current Issues" : "https://worldoil.com/rss?feed=issue",
+        "OGJ: General Interest" : "https://www.ogj.com/__rss/website-scheduled-content.xml?input=%7B%22sectionAlias%22%3A%22general-interest%22%7D",
+        "OGJ Exploration and Development" : "https://www.ogj.com/__rss/website-scheduled-content.xml?input=%7B%22sectionAlias%22%3A%22exploration-development%22%7D",
+        "OGJ: Drilling and Production" : "https://www.ogj.com/__rss/website-scheduled-content.xml?input=%7B%22sectionAlias%22%3A%22drilling-production%22%7D", 
+        "OGJ: Refining" : "https://www.ogj.com/__rss/website-scheduled-content.xml?input=%7B%22sectionAlias%22%3A%22refining-processing%22%7D",
+        "OGJ: Pipelines" : "https://www.ogj.com/__rss/website-scheduled-content.xml?input=%7B%22sectionAlias%22%3A%22pipelines-transportation%22%7D",
+        "OGJ: Energy Transition" : "https://www.ogj.com/__rss/website-scheduled-content.xml?input=%7B%22sectionAlias%22%3A%22energy-transition%22%7D",
+        "US Energy and Information Administration" : "https://www.eia.gov/rss/todayinenergy.xml",
+        "Oil and Gas 360" : "https://www.oilandgas360.com/feed/",
+        "Shale" : "https://shalemag.com/feed/",
+        "MEES" : "https://www.mees.com/latest-issue/rss",
+        "Egypt Oil and Gas" : "https://egyptoil-gas.com/news/feed/",
+        "DIC Oil" : "https://dicoiltools.wordpress.com/feed/",
+        "Permian Basin" : "http://pboilandgasmagazine.com/feed/",
+        "CNBC" : "https://www.cnbc.com/id/10000030/device/rss",
+        "Schneider" : "https://blog.se.com/oil-and-gas/feed/",
+        "Oil and Gas Magazine" : "https://www.oilandgasmagazine.com.mx/feed/",
+        "BOE Report" : "https://boereport.com/feed/",
+        "Oilfield Technology" : "https://www.oilfieldtechnology.com/rss/oilfieldtechnology.xml",
+        "AOG Digital" : "https://aogdigital.com/news/latest?format=feed",
+        "Adrian" : "http://adrianoil.blogspot.com/feeds/posts/default?alt=rss",
+        "Oil and Gas Investments" : "https://oilandgas-investments.com/feed/"
+
     }
     
     all_feed_data = {}
