@@ -120,11 +120,9 @@ def main():
     selected_category = st.selectbox("Choose a Category", category_options)
     search_query = st.text_input("Search by any keyword or partial title:", "")
     
-    sort_option = st.selectbox("Sort articles by:", ["Date", "Relevance Score"], index=0)
-    
 
     
-    articles = get_articles(search_query, source_filter, selected_category, sort_by="date" if sort_option == "Date" else "relevance")
+    articles = get_articles(search_query, source_filter, selected_category, sort_by="relevance")
     
     st.write(f"**Found {len(articles)} articles** matching your criteria:")
     for article in articles:

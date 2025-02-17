@@ -38,12 +38,6 @@ except ImportError:
     sys.exit(1)
 
 try:
-    import faiss
-except ImportError:
-    print("Please install faiss-cpu: pip install faiss-cpu")
-    sys.exit(1)
-
-try:
     from sentence_transformers import SentenceTransformer
 except ImportError:
     print("Please install sentence-transformers: pip install sentence-transformers")
@@ -100,6 +94,9 @@ def summarize_with_llm(text):
     - Core technological innovations
     - Industry impact and relevance
     - Future implications and trends
+    - ADNOC's strategic alignment and potential opportunities
+
+    Also provide me with the latest companies/startups which are working on these technologies/innovations specially in the Oil and Gas field. Don't repeat the companies and not the obvious/big/famous ones.
     """
     return client.text_generation(prompt, max_new_tokens=1024)
 
@@ -110,7 +107,7 @@ if __name__ == "__main__":
         sys.exit(1)
     
     summary = summarize_with_llm(input_text)
-    relevance_score = compute_relevance_score(input_text, ["AI", "machine learning", "energy", "ESG", "sustainability", "oil", "gas"])
+    relevance_score = compute_relevance_score(summary, ["AI", "machine learning", "energy", "ESG", "sustainability", "oil", "gas", 'ADNOC'])
     
     print("SUMMARY:", summary)
     print("RELEVANCE SCORE:", relevance_score)

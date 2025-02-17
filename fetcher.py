@@ -247,7 +247,6 @@ def get_llm_summary(text):
             timeout=120  # adjust timeout as needed
         )
         output_lines = output.strip().split("RELEVANCE SCORE: ")
-        print(f"LLM Summary: {output_lines[0]}, Relevance Score: {output_lines[1]}")
         return output_lines[0], float(output_lines[1])
     except Exception as e:
         return f"Error in LLM summary: {e}"
@@ -294,6 +293,7 @@ def fetch_rss_feeds():
                 if any(keyword.lower() in clean_text for keyword in TECHNOLOGY_KEYWORDS):
                     # Call the LLM summarizer with the scraped text.
                     llm_summary, relevance = get_llm_summary(scraped_text)
+                    #print(f"LLM Summary for '{title}': {llm_summary}...")  # Print a snippet of the summary
                     #print(f"LLM Summary for '{title}': {llm_summary[:1024]}...")  # Print a snippet of the summary
 
                     insert_article(
@@ -301,7 +301,7 @@ def fetch_rss_feeds():
                         link=link,
                         snippet=llm_summary,  # using the LLM summary as snippet
                         relevance_score=relevance,
-                        published_date=published_date.strftime("%Y-%m-%d %H:%M:%S"),
+                        published_date=published_date.strftime("%Y-%m-%d %H:%M:%S") if published_date!='' else '',
                         source=name,
                         full_text=scraped_text,
                         locations=str(location)
