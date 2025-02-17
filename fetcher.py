@@ -242,7 +242,7 @@ def get_llm_summary(text):
     try:
         # Run LLM_Summary.py with the temporary file as argument.
         output = subprocess.check_output(
-            ["python", "summary_new.py", temp_file_path],
+            ["python", "summary.py", temp_file_path],
             universal_newlines=True,
             timeout=120  # adjust timeout as needed
         )
