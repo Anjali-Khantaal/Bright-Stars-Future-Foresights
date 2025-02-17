@@ -107,7 +107,7 @@ if __name__ == "__main__":
         sys.exit(1)
     
     summary = summarize_with_llm(input_text)
-    relevance_score = compute_relevance_score(summary, ["AI", "machine learning", "energy", "ESG", "sustainability", "oil", "gas", 'ADNOC'])
+    relevance_score = compute_relevance_score(input_text, ["AI", "machine learning", "energy", "ESG", "sustainability", "oil", "gas"])
     
     print("SUMMARY:", summary)
     print("RELEVANCE SCORE:", relevance_score)
