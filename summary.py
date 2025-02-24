@@ -1,15 +1,3 @@
-"""
-LLM_Summary.py
-
-A script that:
-1) Extracts text from a PDF using pdfplumber or reads text from a plain text file
-2) Splits text into manageable chunks
-3) Creates embeddings of chunks using a SentenceTransformer model
-4) Stores embeddings in a FAISS vector index
-5) Retrieves the most relevant chunks for a user query
-6) Summarizes those chunks with a local open-source LLM (Falcon-7B-Instruct)
-"""
-
 import os
 import sys
 import re
@@ -43,7 +31,6 @@ except ImportError:
     print("Please install sentence-transformers: pip install sentence-transformers")
     sys.exit(1)
 
-
 # ==========================
 # 2. Text Extraction
 # ==========================
@@ -72,6 +59,9 @@ def extract_text(input_path):
             sys.exit(1)
     return text
 
+# ==========================
+# 3. Compute Relevance, Novelty & Heat Scores
+# ==========================
 def compute_relevance_score(text, keywords):
     """Computes relevance based on keyword matching and embedding similarity."""
     text_lower = text.lower()
@@ -79,6 +69,35 @@ def compute_relevance_score(text, keywords):
     similarity_score = len(set(text_lower.split()) & set(keywords)) / len(set(text_lower.split()))
     return (keyword_matches * 2 + similarity_score * 10) / (len(keywords) + 1) * 100
 
+def compute_novelty_score(text):
+    """Computes a novelty score using LLM analysis."""
+    prompt = f"""
+    You are an AI expert in technological innovation. Given the following text, analyze how novel the described technology is.
+    Please rate novelty from 0 to 100, where:
+    - 0 means the technology is widely known and mature
+    - 100 means the technology is groundbreaking and recently emerging
+    Here is the text:
+    {text}
+    Give me a score and also give a single line explaination why it is novel or not.
+    """
+    return client.text_generation(prompt, max_new_tokens=512).strip()
+
+def compute_heat_score(text):
+    """Computes a heat score based on industry adoption and recurrence."""
+    prompt = f"""
+    You are an AI expert in tracking technology trends. Based on the following text, determine how popular and widely adopted the described technology is in the industry.
+    Please rate the heat score from 0 to 100, where:
+    - 0 means the technology is niche and rarely mentioned
+    - 100 means the technology is widely adopted and frequently discussed
+    Here is the text:
+    {text}
+    Give me a score and also give a single line explaination why it is hot or not.
+    """
+    return client.text_generation(prompt, max_new_tokens=512).strip()
+
+# ==========================
+# 4. Summarization
+# ==========================
 def summarize_with_llm(text):
     """Summarizes the text using an LLM with a detailed and structured prompt."""
     prompt = f"""
@@ -96,10 +115,13 @@ def summarize_with_llm(text):
     - Future implications and trends
     - ADNOC's strategic alignment and potential opportunities
 
-    Also provide me with the latest companies/startups which are working on these technologies/innovations specially in the Oil and Gas field. Don't repeat the companies and not the obvious/big/famous ones.
+    Also provide me with the latest companies/startups which are working on these technologies/innovations, especially in the Oil and Gas field. Don't repeat companies and exclude obvious/big/famous ones.
     """
     return client.text_generation(prompt, max_new_tokens=1024)
 
+# ==========================
+# 5. Main Execution
+# ==========================
 if __name__ == "__main__":
     input_text = extract_text(input_path)
     if not input_text.strip():
@@ -108,6 +130,10 @@ if __name__ == "__main__":
     
     summary = summarize_with_llm(input_text)
     relevance_score = compute_relevance_score(input_text, ["AI", "machine learning", "energy", "ESG", "sustainability", "oil", "gas"])
+    novelty_score = compute_novelty_score(input_text)
+    heat_score = compute_heat_score(input_text)
     
     print("SUMMARY:", summary)
     print("RELEVANCE SCORE:", relevance_score)
+    print("NOVELTY SCORE:", novelty_score)
+    print("HEAT SCORE:", heat_score)

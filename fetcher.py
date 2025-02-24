@@ -114,7 +114,6 @@ FEEDS = {
         "EPA News": "https://www.epa.gov/rss/epa-news.xml",
         "Offshore Energy.biz": "https://www.offshore-energy.biz/feed/",
         "Energy Voice": "https://www.energyvoice.com/feed/",
-        "DOAJ (Directory of Open Access Journals)": "https://doaj.org/feed",
         "UK Oil & Gas Authority": "https://www.ogauthority.co.uk/feed",
         "World Energy Council": "https://www.worldenergy.org/rss",
         "ABC News" : "http://feeds.abcnews.com/abcnews/usheadlines",
@@ -174,6 +173,8 @@ def create_articles_table():
             link TEXT UNIQUE,
             snippet TEXT,
             relevance_score REAL,
+            novelty_score TEXT,
+            heat_score TEXT,
             published_date TEXT,
             source TEXT,
             full_text TEXT,
@@ -183,17 +184,17 @@ def create_articles_table():
     conn.commit()
     conn.close()
 
-def insert_article(title, link, snippet, relevance_score, published_date, source, full_text="", locations=""):
+def insert_article(title, link, snippet, relevance_score,novelty_score, heat_score, published_date, source, full_text="", locations=""):
     """Insert an article into the database."""
     conn = sqlite3.connect(DATABASE)
     c = conn.cursor()
     c.execute(
         """
         INSERT OR IGNORE INTO articles 
-        (title, link, snippet, relevance_score, published_date, source, full_text, locations)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        (title, link, snippet, relevance_score, novelty_score, heat_score, published_date, source, full_text, locations)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """,
-        (title, link, snippet, relevance_score, published_date, source, full_text, locations)
+        (title, link, snippet, relevance_score,novelty_score, heat_score, published_date, source, full_text, locations)
     )
     conn.commit()
     conn.close()
@@ -246,8 +247,47 @@ def get_llm_summary(text):
             universal_newlines=True,
             timeout=120  # adjust timeout as needed
         )
-        output_lines = output.strip().split("RELEVANCE SCORE: ")
-        return output_lines[0], float(output_lines[1])
+        # Parsing the output
+        output_lines = output.strip().split("\n")
+        
+        summary_lines = []
+        novelty_text = ""
+        heat_text = ""
+        relevance_score = None
+        collecting_summary, collecting_novelty, collecting_heat = False, False, False
+
+        for line in output_lines:
+            if line.startswith("SUMMARY:"):
+                collecting_summary = True
+                collecting_novelty = False
+                collecting_heat = False
+                summary_lines.append(line.replace("SUMMARY:", "").strip())
+            elif line.startswith("RELEVANCE SCORE:"):
+                collecting_summary = False
+                collecting_novelty = False
+                collecting_heat = False
+                relevance_score = float(line.replace("RELEVANCE SCORE:", "").strip())
+            elif line.startswith("NOVELTY SCORE:"):
+                collecting_summary = False
+                collecting_novelty = True
+                collecting_heat = False
+                novelty_text = line.replace("NOVELTY SCORE:", "").strip()
+            elif line.startswith("HEAT SCORE:"):
+                collecting_summary = False
+                collecting_novelty = False
+                collecting_heat = True
+                heat_text = line.replace("HEAT SCORE:", "").strip()
+            elif collecting_summary:
+                summary_lines.append(line.strip())
+            elif collecting_novelty:
+                novelty_text += " " + line.strip()
+            elif collecting_heat:
+                heat_text += " " + line.strip()
+
+        # Join extracted multi-line outputs into full text
+        summary = "\n".join(summary_lines).strip()
+        return summary, relevance_score, novelty_text, heat_text
+
     except Exception as e:
         return f"Error in LLM summary: {e}"
     
@@ -283,24 +323,22 @@ def fetch_rss_feeds():
                     continue
                 # Instead of using the provided summary, we scrape the article.
                 scraped_text = extract_full_text(link) if link != "No link" else ""
-                if datetime(*entry.published_parsed[:6], tzinfo=timezone.utc) and datetime(*entry.published_parsed[:6], tzinfo=timezone.utc) < cutoff_date:
-                    published_date = datetime(*entry.published_parsed[:6], tzinfo=timezone.utc)
-                else:
-                    published_date = ''
+                
+                published_date = ''
                 location = extract_geospatial_info(scraped_text)
                 # Only run LLM_Summary.py if the article contains any of the keywords.
                 clean_text = f"{title} {scraped_text}".lower()
                 if any(keyword.lower() in clean_text for keyword in TECHNOLOGY_KEYWORDS):
                     # Call the LLM summarizer with the scraped text.
-                    llm_summary, relevance = get_llm_summary(scraped_text)
-                    #print(f"LLM Summary for '{title}': {llm_summary}...")  # Print a snippet of the summary
-                    #print(f"LLM Summary for '{title}': {llm_summary[:1024]}...")  # Print a snippet of the summary
+                    llm_summary, relevance, novelity, heat_score = get_llm_summary(scraped_text)
 
                     insert_article(
                         title=title,
                         link=link,
                         snippet=llm_summary,  # using the LLM summary as snippet
                         relevance_score=relevance,
+                        novelty_score=novelity,
+                        heat_score=heat_score,
                         published_date=published_date.strftime("%Y-%m-%d %H:%M:%S") if published_date!='' else '',
                         source=name,
                         full_text=scraped_text,

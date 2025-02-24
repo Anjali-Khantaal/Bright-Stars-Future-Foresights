@@ -80,7 +80,7 @@ def get_articles(search_query=None, source_filter="All", category="All", sort_by
                 query_params.extend([f"%{kw}%", f"%{kw}%"])
     
     base_query = """
-        SELECT id, title, link, snippet, published_date, source, relevance_score, locations
+        SELECT id, title, link, snippet, published_date, source, relevance_score,novelty_score,heat_score, locations
         FROM articles
     """
     
@@ -126,9 +126,11 @@ def main():
     
     st.write(f"**Found {len(articles)} articles** matching your criteria:")
     for article in articles:
-        id,title, link, snippet, published_date, source, relevance_score, locations = article
+        id,title, link, snippet, published_date, source, relevance_score, novelty_score,heat_score, locations = article
         st.subheader(title)
         st.write(f"**Source:** {source} | **Published:** {published_date} | **Relevance Score:** {relevance_score:.2f}")
+        st.write(f"**Novelty Score:** {novelty_score}")
+        st.write(f"**Heat Score:** {heat_score}")
         if "SUMMARY: " in snippet:
             summary_text = snippet.split("SUMMARY: ", 1)[1]
         else:
