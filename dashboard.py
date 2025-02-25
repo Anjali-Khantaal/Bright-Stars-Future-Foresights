@@ -86,8 +86,15 @@ def get_articles(search_query=None, source_filter="All", category="All", sort_by
     
     if query_conditions:
         base_query += " WHERE " + " AND ".join(query_conditions)
-    
-    order_by = "published_date DESC" if sort_by == "date" else "relevance_score DESC"
+    # Dynamically set sorting order based on user selection
+    if sort_by == "relevance":
+        order_by = "relevance_score DESC"
+    elif sort_by == "novelty":
+        order_by = "novelty_score DESC"
+    elif sort_by == "heat":
+        order_by = "heat_score DESC"
+    else:
+        order_by = "relevance_score DESC"  # Default fallback
     base_query += f" ORDER BY {order_by}"
     
     c.execute(base_query, query_params)
@@ -119,18 +126,26 @@ def main():
     category_options = ["All"] + list(PREDEFINED_CATEGORIES.keys())
     selected_category = st.selectbox("Choose a Category", category_options)
     search_query = st.text_input("Search by any keyword or partial title:", "")
+    # Sorting option
+    sort_by = st.selectbox("Sort by", ["Relevance Score", "Novelty Score", "Heat Score", "Published Date"], index=0)
     
+    # Map UI dropdown to DB column names
+    sort_mapping = {
+        "Relevance Score": "relevance",
+        "Novelty Score": "novelty",
+        "Heat Score": "heat",
+        "Published Date": "date"
+    }
+    selected_sort = sort_mapping[sort_by]
 
     
-    articles = get_articles(search_query, source_filter, selected_category, sort_by="relevance")
+    articles = get_articles(search_query, source_filter, selected_category, sort_by=selected_sort)
     
     st.write(f"**Found {len(articles)} articles** matching your criteria:")
     for article in articles:
         id,title, link, snippet, published_date, source, relevance_score, novelty_score,heat_score, locations = article
         st.subheader(title)
-        st.write(f"**Source:** {source} | **Published:** {published_date} | **Relevance Score:** {relevance_score:.2f}")
-        st.write(f"**Novelty Score:** {novelty_score}")
-        st.write(f"**Heat Score:** {heat_score}")
+        st.write(f"**Source:** {source} | **Published:** {published_date} | **Relevance Score:** {relevance_score:.2f} | **Novelty Score:** {novelty_score} | **Heat Score:** {heat_score}")
         if "SUMMARY: " in snippet:
             summary_text = snippet.split("SUMMARY: ", 1)[1]
         else:

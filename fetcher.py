@@ -284,9 +284,14 @@ def get_llm_summary(text):
             elif collecting_heat:
                 heat_text += " " + line.strip()
 
+        # Extract only the numeric scores
+        novelty_score = float(re.search(r'\d+', novelty_text).group()) if re.search(r'\d+', novelty_text) else None
+        heat_score = float(re.search(r'\d+', heat_text).group()) if re.search(r'\d+', heat_text) else None
+
         # Join extracted multi-line outputs into full text
         summary = "\n".join(summary_lines).strip()
-        return summary, relevance_score, novelty_text, heat_text
+        
+        return summary, relevance_score, novelty_score, heat_score
 
     except Exception as e:
         return f"Error in LLM summary: {e}"
