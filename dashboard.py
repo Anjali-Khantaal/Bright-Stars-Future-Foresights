@@ -12,8 +12,10 @@ from folium.plugins import HeatMap
 import ast
 import time
 import json
-import pandas as pd
 import requests
+
+# Set page configuration to wide mode for a more spacious layout
+st.set_page_config(page_title="Future Foresights Dashboard", layout="wide")
 
 # At the top of your file, after your imports:
 geolocator = Nominatim(user_agent="geo_extractor", timeout=10)
@@ -31,7 +33,6 @@ def geocode_cached(location_name):
             geocode_cache[location_name] = coords
             return coords
     except GeocoderTimedOut:
-        # Optionally, you can retry or simply return None here.
         geocode_cache[location_name] = None
     geocode_cache[location_name] = None
     return None
@@ -60,22 +61,16 @@ COUNTRY_ALIASES = {
     "UK": "United Kingdom",
     "KSA": "Saudi Arabia",
     "EU": "European Union",
-    # Add more as needed...
 }
 KNOWN_COUNTRIES = {
     "united states", "united kingdom", "saudi arabia", "china",
     "india", "germany", "france", "uae", "brazil", "canada",
-    # etc...
 }
 
 # =====================
 # Helper Functions
 # =====================
 def safe_score(value):
-    """
-    Convert any value to an integer [0, 100] for st.progress().
-    This prevents ValueError if the score is a string like '70.0' or out of range.
-    """
     try:
         val = float(value)
         if val < 0:
@@ -84,21 +79,15 @@ def safe_score(value):
             val = 100
         return int(val)
     except:
-        # If conversion fails, default to 0
         return 0
 
 def safe_float_str(value):
-    """
-    Convert any value to a float for display (e.g., {:.2f}).
-    Returns 0.0 if parsing fails.
-    """
     try:
         return float(value)
     except:
         return 0.0
 
 def geocode(location_name):
-    """Convert location name to latitude and longitude using geopy."""
     geolocator = Nominatim(user_agent="geo_extractor")
     try:
         location = geolocator.geocode(location_name, timeout=10)
@@ -109,20 +98,14 @@ def geocode(location_name):
     return None
 
 def find_matching_categories(title, snippet):
-    """
-    Return a list of PREDEFINED_CATEGORIES that match the article's title or snippet,
-    based on presence of relevant keywords.
-    """
     matched = []
-    # Combine title + snippet, then check for any of the category keywords
     text_lower = (title or "") + " " + (snippet or "")
     text_lower = text_lower.lower()
-
     for cat, keywords in PREDEFINED_CATEGORIES.items():
         for kw in keywords:
             if kw.lower() in text_lower:
                 matched.append(cat)
-                break  # Avoid duplicates from the same category
+                break
     return matched
 
 # ----------------------
@@ -150,7 +133,6 @@ def create_table_if_not_exists():
     conn.close()
 
 def get_title_suggestions(search_query):
-    """Return up to 5 article title suggestions matching the search query."""
     conn = sqlite3.connect(DATABASE)
     c = conn.cursor()
     query = "SELECT DISTINCT title FROM articles WHERE title LIKE ? LIMIT 5"
@@ -160,33 +142,22 @@ def get_title_suggestions(search_query):
     return suggestions
 
 def get_articles(search_query=None, source_filter="All", categories=None, date_range=None, sort_by="date"):
-    """
-    Fetch articles applying:
-     - search query on title/snippet,
-     - source filter,
-     - multiple categories (if provided),
-     - date_range filter,
-     - sorting.
-    """
     conn = sqlite3.connect(DATABASE)
     c = conn.cursor()
     query_conditions = []
     query_params = []
     
-    # Search query filter
     if search_query:
         query_conditions.append("(title LIKE ? OR snippet LIKE ?)")
         like_query = f"%{search_query}%"
         query_params.extend([like_query, like_query])
     
-    # Source filter
     if source_filter != "All":
         if source_filter == "RSS":
             query_conditions.append("source != 'arXiv'")
         elif source_filter == "arXiv":
             query_conditions.append("source = 'arXiv'")
     
-    # Multiple categories (faceted filtering)
     if categories and len(categories) > 0:
         cat_conditions = []
         for cat in categories:
@@ -200,13 +171,11 @@ def get_articles(search_query=None, source_filter="All", categories=None, date_r
         if cat_conditions:
             query_conditions.append("(" + " OR ".join(cat_conditions) + ")")
     
-    # Date range filtering (only if date_range is provided)
     if date_range:
         start_date, end_date = date_range
         query_conditions.append("published_date BETWEEN ? AND ?")
         query_params.extend([start_date.strftime("%Y-%m-%d"), end_date.strftime("%Y-%m-%d")])
     
-    # --- Modified SQL: Include full_text column ---
     base_query = """
         SELECT id, title, link, snippet, full_text, published_date, source, 
                relevance_score, novelty_score, heat_score, locations
@@ -216,7 +185,6 @@ def get_articles(search_query=None, source_filter="All", categories=None, date_r
     if query_conditions:
         base_query += " WHERE " + " AND ".join(query_conditions)
     
-    # Sorting order
     if sort_by == "relevance":
         order_by = "relevance_score DESC"
     elif sort_by == "novelty":
@@ -226,7 +194,7 @@ def get_articles(search_query=None, source_filter="All", categories=None, date_r
     elif sort_by == "date":
         order_by = "published_date DESC"
     else:
-        order_by = "relevance_score DESC"  # Default fallback
+        order_by = "relevance_score DESC"
     
     base_query += f" ORDER BY {order_by}"
     
@@ -236,33 +204,19 @@ def get_articles(search_query=None, source_filter="All", categories=None, date_r
     return rows
 
 def display_choropleth_map(filtered_articles, theme="Dark"):
-    """
-    Displays a choropleth map where each country's shade corresponds to how many times 
-    it appears in the filtered articles. Darker shades represent a higher count.
-    """
-    # Aggregate country counts from the stored 'locations' column (assumed at index 10)
     country_counts = {}
     for article in filtered_articles:
-        # 'locations' is the last field in each article row (index 10 as per SELECT)
         locations_str = article[10]  
         if locations_str:
-            # Split by comma and strip any extra spaces
             countries = [country.strip() for country in locations_str.split(",") if country.strip()]
             for country in countries:
                 country_counts[country] = country_counts.get(country, 0) + 1
 
-    # Convert the dictionary to a DataFrame for choropleth mapping
     df = pd.DataFrame(list(country_counts.items()), columns=["Country", "Count"])
-
-    # Load world GeoJSON boundaries (this is a public resource)
     geojson_url = "https://raw.githubusercontent.com/python-visualization/folium/master/examples/data/world-countries.json"
     world_geo = requests.get(geojson_url).json()
-
-    # Choose tile style based on the selected theme
     tile = "CartoDB dark_matter" if theme == "Dark" else "CartoDB positron"
     m = folium.Map(location=[20, 0], zoom_start=2, tiles=tile)
-
-    # Create the choropleth layer that colors countries based on their count
     choropleth = folium.Choropleth(
         geo_data=world_geo,
         data=df,
@@ -274,20 +228,15 @@ def display_choropleth_map(filtered_articles, theme="Dark"):
         legend_name="Number of Article Mentions",
         nan_fill_color="white"
     ).add_to(m)
-
-    # Optionally, add tooltips to display country names on hover
     folium.features.GeoJsonTooltip(
         fields=["name"],
         aliases=["Country:"],
         localize=True
     ).add_to(choropleth.geojson)
-
     folium_static(m)
 
 def display_geospatial_map(filtered_articles):
-    """Display a map with locations where technology is trending based on filtered articles."""
     m = folium.Map(location=[20, 0], zoom_start=2)
-    
     for article in filtered_articles:
         _, title, _, _, _, _, _, _, _, locations = article
         if locations:
@@ -300,35 +249,26 @@ def display_geospatial_map(filtered_articles):
 def display_heatmap(filtered_articles, theme="Dark"):
     tile = "CartoDB dark_matter" if theme == "Dark" else "CartoDB positron"
     m = folium.Map(location=[20, 0], zoom_start=2, tiles=tile)
-
     unique_countries = set()
     for article in filtered_articles:
-        full_text = article[4]  # 'full_text' column
+        full_text = article[4]
         if not full_text:
             continue
-
         text_lower = full_text.lower()
-
-        # Check if any known country name appears in the text
         for country in KNOWN_COUNTRIES:
             if country in text_lower:
-                # Also handle short forms like "US" -> "United States"
-                # if you want to expand short forms, do it here:
                 expanded_country = COUNTRY_ALIASES.get(country.upper(), country.title())
                 unique_countries.add(expanded_country)
-
     heat_data = []
     with st.spinner("Geocoding country names..."):
         for country in unique_countries:
             coordinates = geocode_cached(country)
             if coordinates:
                 heat_data.append(coordinates)
-
     if heat_data:
         HeatMap(heat_data, radius=25, blur=15).add_to(m)
     else:
         st.info("No valid location data found. Displaying default world map below.")
-
     folium_static(m)
 
 
@@ -336,20 +276,20 @@ def main():
     st.image(ADNOC_LOGO_URL, width=150)
     st.title("Future Foresights Dashboard")
     
-    # Inject custom CSS for a cohesive look (custom theme)
+    # Inject custom CSS for a cohesive look
     st.markdown("""
     <style>
     body {
         font-family: 'Arial', sans-serif;
     }
     .summary-container {
-       background-color: #262730;  /* Dark grey background */
-       border-left: 4px solid #009688;  /* Teal border */
+       background-color: #262730;
+       border-left: 4px solid #009688;
        padding: 15px;
        margin: 15px 0;
        border-radius: 8px;
        line-height: 1.5;
-       color: #ffffff;  /* White text for readability */
+       color: #ffffff;
        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     }
     .summary-container p {
@@ -357,7 +297,7 @@ def main():
     }
     details summary {
        cursor: pointer;
-       color: #00bcd4;  /* Lighter teal color */
+       color: #00bcd4;
        text-decoration: none;
        list-style: none;
        font-weight: bold;
@@ -378,11 +318,9 @@ def main():
        background-color: #00bcd4;
        color: #262730;
     }
-    /* Improve spacing when details are open */
     details[open] > *:not(summary) {
        margin-top: 10px;
     }
-    /* Simple inline badge styling */
     .badge {
        display: inline-block;
        background-color: #009688;
@@ -395,9 +333,9 @@ def main():
     </style>
     """, unsafe_allow_html=True)
     
-    # Light/Dark Mode Toggle in Sidebar
-    theme_choice = st.sidebar.radio("Choose Theme", options=["Light", "Dark"], index=1)
-
+    # Sidebar: Theme Toggle and Filters for improved responsiveness
+    # theme_choice = st.sidebar.radio("Choose Theme", options=["Light", "Dark"], index=1)
+    theme_choice = "Dark"
     if theme_choice == "Light":
         st.markdown("""
         <style>
@@ -405,7 +343,6 @@ def main():
             background-color: #ffffff;
             color: #000000;
         }
-        /* Force label text color to black in the sidebar and main container */
         label, .stTextInput label, .stSelectbox label, .stDateInput label, 
         .stCheckbox label, .stRadio label {
             color: #000000 !important;
@@ -419,49 +356,37 @@ def main():
             background-color: #1e1e1e;
             color: #ffffff;
         }
-        /* Force label text color to white in the sidebar and main container */
         label, .stTextInput label, .stSelectbox label, .stDateInput label, 
         .stCheckbox label, .stRadio label {
             color: #ffffff !important;
         }
         </style>
         """, unsafe_allow_html=True)
-
     
-    create_table_if_not_exists()
+    st.sidebar.markdown("---")
+    st.sidebar.header("Filters")
     
-    # Responsive Design: Arrange filter controls using columns
-    col1, col2, col3, col4 = st.columns(4)
-    
-    with col1:
-        source_filter = st.selectbox("Select Source", ["All", "RSS", "arXiv"],
+    source_filter = st.sidebar.selectbox("Select Source", ["All", "RSS", "arXiv"],
                                      help="Filter articles by their source")
-    with col2:
-        # Multiple category selection for faceted filtering
-        selected_categories = st.multiselect("Choose Categories", options=list(PREDEFINED_CATEGORIES.keys()))
-    with col3:
-        # Live Search/Autocomplete
-        search_query = st.text_input("Search by any keyword or partial title:")
-        if search_query:
-            suggestions = get_title_suggestions(search_query)
-            if suggestions:
-                chosen = st.selectbox("Suggestions", suggestions, key="autocomplete")
-                if chosen:
-                    search_query = chosen
-    with col4:
-        # Date range filter is optional via a checkbox
-        apply_date_filter = st.checkbox("Apply Published Date Filter", value=False)
-        if apply_date_filter:
-            date_range = st.date_input("Published Date Range", value=(date(2020, 1, 1), date.today()))
-            if isinstance(date_range, tuple):
-                start_date, end_date = date_range
-            else:
-                start_date = end_date = None
+    selected_categories = st.sidebar.multiselect("Choose Categories", options=list(PREDEFINED_CATEGORIES.keys()))
+    search_query = st.sidebar.text_input("Search by any keyword or partial title:")
+    if search_query:
+        suggestions = get_title_suggestions(search_query)
+        if suggestions:
+            chosen = st.sidebar.selectbox("Suggestions", suggestions, key="autocomplete")
+            if chosen:
+                search_query = chosen
+    apply_date_filter = st.sidebar.checkbox("Apply Published Date Filter", value=False)
+    if apply_date_filter:
+        date_range = st.sidebar.date_input("Published Date Range", value=(date(2020, 1, 1), date.today()))
+        if isinstance(date_range, tuple):
+            start_date, end_date = date_range
         else:
             start_date = end_date = None
+    else:
+        start_date = end_date = None
 
-    # Sorting option
-    sort_by = st.selectbox("Sort by", ["Relevance Score", "Novelty Score", "Heat Score", "Published Date"], index=0)
+    sort_by = st.sidebar.selectbox("Sort by", ["Relevance Score", "Novelty Score", "Heat Score", "Published Date"], index=0)
     sort_mapping = {
         "Relevance Score": "relevance",
         "Novelty Score": "novelty",
@@ -470,7 +395,8 @@ def main():
     }
     selected_sort = sort_mapping[sort_by]
 
-    # Fetch articles
+    create_table_if_not_exists()
+    
     articles = get_articles(
         search_query=search_query,
         source_filter=source_filter,
@@ -482,35 +408,26 @@ def main():
     st.write(f"**Found {len(articles)} articles** matching your criteria:")
 
     if st.checkbox("Show Choropleth Map"):
-        st.header("Choropleth Map of Countries Mentioned")
+        st.header("Choropleth Map of Countries")
         display_choropleth_map(articles, theme=theme_choice)
 
     for article in articles:
         (article_id, title, link, snippet, full_text, published_date, source,
          relevance_score, novelty_score, heat_score, locations) = article
         
-        # Convert numeric values for display
         rel_val = safe_float_str(relevance_score)
         nov_val = safe_float_str(novelty_score)
         heat_val = safe_float_str(heat_score)
 
-        # 1) Show Title & Badges
         st.subheader(title)
-        # Determine matched categories for inline badges
-        from re import IGNORECASE
-        matched_cats = []
         matched_cats = find_matching_categories(title, snippet)
-        
         if matched_cats:
-            # Build simple HTML badges
             badge_str = "".join(
                 f"<span class='badge'>{cat}</span>"
                 for cat in matched_cats
             )
-            # Show them right under the title
             st.markdown(badge_str, unsafe_allow_html=True)
         
-        # 2) Show Source & Scores
         st.write(
             f"**Source:** {source} | **Published:** {published_date} "
             f"| **Relevance Score:** {rel_val:.2f} "
@@ -518,7 +435,6 @@ def main():
             f"| **Heat Score:** {heat_val:.2f}"
         )
         
-        # Interactive Score Bars
         score_col1, score_col2, score_col3 = st.columns(3)
         with score_col1:
             st.write("Relevance")
@@ -530,7 +446,6 @@ def main():
             st.write("Heat")
             st.progress(safe_score(heat_score))
         
-        # 3) Summaries
         if "SUMMARY: " in snippet:
             summary_text = snippet.split("SUMMARY: ", 1)[1]
         else:
@@ -555,8 +470,6 @@ def main():
         summary_html += "</div>"
         
         st.markdown(summary_html, unsafe_allow_html=True)
-
-        # 4) Read More Link
         st.markdown(f"[Read More]({link})", unsafe_allow_html=True)
         st.write("---")
     
