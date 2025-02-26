@@ -349,14 +349,22 @@ def fetch_rss_feeds():
                 if article_exists(link):  # Skip if the article is already in the database
                     print(f"Skipping existing article: {title}")
                     continue
-                # Instead of using the provided summary, we scrape the article.
+                
+                # Extract and format the published date
+                published_date = ""
+                if hasattr(entry, 'published_parsed') and entry.published_parsed:
+                    published_date = time.strftime('%Y-%m-%d', entry.published_parsed)
+                elif hasattr(entry, 'updated_parsed') and entry.updated_parsed:
+                    published_date = time.strftime('%Y-%m-%d', entry.updated_parsed)
+                
+                # If still no date, use today's date
+                if not published_date:
+                    published_date = datetime.now().strftime('%Y-%m-%d')
+                
+                # Rest of your code remains the same...
                 scraped_text = extract_full_text(link) if link != "No link" else ""
                 
-                published_date = ''
-                # location = extract_geospatial_info(scraped_text)
-                countries = extract_geospatial_info(scraped_text)
-                # Convert list to a comma-separated string (if any countries are found)
-                countries_str = ",".join(countries) if countries else ""
+                location = extract_geospatial_info(scraped_text)
                 # Only run LLM_Summary.py if the article contains any of the keywords.
                 clean_text = f"{title} {scraped_text}".lower()
                 if any(keyword.lower() in clean_text for keyword in TECHNOLOGY_KEYWORDS):
@@ -370,10 +378,10 @@ def fetch_rss_feeds():
                         relevance_score=relevance,
                         novelty_score=novelity,
                         heat_score=heat_score,
-                        published_date=published_date.strftime("%Y-%m-%d %H:%M:%S") if published_date!='' else '',
+                        published_date=published_date,  # Now this will have a value
                         source=name,
                         full_text=scraped_text,
-                        locations=countries_str
+                        locations=str(location)
                     )
 
             time.sleep(1)  # Rate limiting
