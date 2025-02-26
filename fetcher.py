@@ -19,7 +19,7 @@ ARXIV_API_URL = (
     "start=0&max_results=3&"
     "sortBy=lastUpdatedDate&sortOrder=descending"
 )
- 
+
 # Configuration from colleague's script
 DAYS_LIMIT = 365
 TECHNOLOGY_KEYWORDS = [
@@ -33,18 +33,18 @@ TECHNOLOGY_KEYWORDS = [
     "industrial IoT", "big data analytics", "cybersecurity in oil & gas",
     "SCADA", "remote monitoring", "5G in oil & gas", "AI-driven optimization",
     "process automation", "digital oilfield", "smart sensors", "machine vision",
- 
+
     # AI & Machine Learning Applications
     "AI-assisted drilling", "AI in reservoir simulation", "reinforcement learning in drilling",
     "predictive maintenance AI", "autonomous drilling", "AI-powered seismic interpretation",
     "cognitive computing in exploration", "deep learning for oilfield analytics",
     "AI-based pipeline monitoring", "LLM", "LLMs in oil and gas",
- 
+
     # Robotics & Advanced Machinery
     "autonomous underwater vehicles", "remotely operated vehicles", "AI-driven inspection robots",
     "self-healing pipelines", "automated drilling rigs", "drone inspections in oil & gas",
     "smart drilling", "digital roughnecks", "robotic well intervention", "robotic refinery maintenance",
- 
+
     # Energy Transition & Carbon Management
     "carbon capture", "carbon utilization", "carbon storage", "carbon sequestration",
     "direct air capture", "low-carbon hydrogen", "blue hydrogen", "green hydrogen",
@@ -52,50 +52,50 @@ TECHNOLOGY_KEYWORDS = [
     "methane detection", "methane emissions monitoring", "flare gas recovery",
     "renewable natural gas", "decarbonization strategies", "biofuels in oil & gas",
     "CO₂ injection", "net-zero emissions", "sustainable drilling",
- 
+
     # Enhanced Oil Recovery (EOR) Technologies
     "chemical EOR", "thermal EOR", "microbial EOR", "CO₂ EOR", "nanotechnology in EOR",
     "gas injection EOR", "smart water flooding", "surfactant-polymer flooding",
     "smart tracers in EOR", "low-salinity water injection",
- 
+
     # Subsurface & Seismic Innovations
     "subsurface imaging", "AI-assisted seismic processing", "fiber optic sensing",
     "seismic inversion", "distributed acoustic sensing", "4D seismic analysis",
     "electromagnetic exploration", "seismic reflection tomography", "microseismic monitoring",
     "seismic while drilling", "AI-based reservoir modeling",
- 
+
     # Drilling & Well Technologies
     "drilling automation", "automated drilling control", "managed pressure drilling",
     "intelligent completions", "smart well technology", "rotary steerable systems",
     "logging while drilling", "measurement while drilling", "wellbore stability analysis",
     "digital drilling fluids", "expandable tubulars", "real-time downhole monitoring",
     "casing drilling technology", "high-temperature drilling tools",
- 
+
     # Pipeline & Refinery Innovations
     "AI-driven pipeline monitoring", "smart pipeline coatings", "leak detection systems",
     "pipeline integrity management", "hydrogen pipeline transport", "pipeline pigging technology",
     "AI-based predictive pipeline maintenance", "refinery digitalization",
     "advanced catalyst development", "renewable refining technologies",
- 
+
     # Offshore & Deepwater Technologies
     "subsea production systems", "floating LNG", "offshore wind integration with oil & gas",
     "deepwater drilling automation", "AI-driven FPSO monitoring", "subsea robotics",
     "autonomous underwater monitoring", "digital twin for offshore platforms",
     "subsea factory concept", "autonomous tanker loading",
- 
+
     # Emerging Materials & Nanotechnology
     "nanomaterials in oil recovery", "smart drilling fluids", "self-healing materials",
     "graphene-based sensors", "smart coatings for pipelines", "high-temperature superconductors",
     "nano-enhanced lubricants", "superhydrophobic coatings for pipelines",
- 
+
     # Alternative & Hybrid Energy Sources
     "gas-to-liquids", "power-to-gas", "synthetic fuels", "hybrid energy systems in oilfields",
     "enhanced geothermal systems", "hydrogen-powered drilling", "floating solar in oilfields",
     "renewable diesel", "bio-refineries in oil & gas", "AI-driven energy storage optimization",
- 
+
     # Advanced Computing Technologies
     "quantum computing",
- 
+
     # Top 25 Global Oil Companies
     "Saudi Aramco", "ExxonMobil", "Chevron", "Shell", "PetroChina", "TotalEnergies",
     "BP", "Sinopec", "Gazprom", "ConocoPhillips", "Rosneft", "Eni", "Equinor",
@@ -103,7 +103,7 @@ TECHNOLOGY_KEYWORDS = [
     "Occidental Petroleum", "Repsol", "Devon Energy", "Hess Corporation", "OMV",
     "CNOOC", "Canadian Natural Resources"
 ]
- 
+
 # RSS feed sources from colleague's script
 FEEDS = {
         "Reuters Commodities": "http://feeds.reuters.com/reuters/commoditiesNews",
@@ -142,7 +142,7 @@ FEEDS = {
         "World Oil: Current Issues" : "https://worldoil.com/rss?feed=issue",
         "OGJ: General Interest" : "https://www.ogj.com/__rss/website-scheduled-content.xml?input=%7B%22sectionAlias%22%3A%22general-interest%22%7D",
         "OGJ Exploration and Development" : "https://www.ogj.com/__rss/website-scheduled-content.xml?input=%7B%22sectionAlias%22%3A%22exploration-development%22%7D",
-        "OGJ: Drilling and Production" : "https://www.ogj.com/__rss/website-scheduled-content.xml?input=%7B%22sectionAlias%22%3A%22drilling-production%22%7D",
+        "OGJ: Drilling and Production" : "https://www.ogj.com/__rss/website-scheduled-content.xml?input=%7B%22sectionAlias%22%3A%22drilling-production%22%7D", 
         "OGJ: Refining" : "https://www.ogj.com/__rss/website-scheduled-content.xml?input=%7B%22sectionAlias%22%3A%22refining-processing%22%7D",
         "OGJ: Pipelines" : "https://www.ogj.com/__rss/website-scheduled-content.xml?input=%7B%22sectionAlias%22%3A%22pipelines-transportation%22%7D",
         "OGJ: Energy Transition" : "https://www.ogj.com/__rss/website-scheduled-content.xml?input=%7B%22sectionAlias%22%3A%22energy-transition%22%7D",
@@ -183,14 +183,14 @@ def create_articles_table():
     """)
     conn.commit()
     conn.close()
- 
+
 def insert_article(title, link, snippet, relevance_score,novelty_score, heat_score, published_date, source, full_text="", locations=""):
     """Insert an article into the database."""
     conn = sqlite3.connect(DATABASE)
     c = conn.cursor()
     c.execute(
         """
-        INSERT OR IGNORE INTO articles
+        INSERT OR IGNORE INTO articles 
         (title, link, snippet, relevance_score, novelty_score, heat_score, published_date, source, full_text, locations)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """,
@@ -198,20 +198,43 @@ def insert_article(title, link, snippet, relevance_score,novelty_score, heat_sco
     )
     conn.commit()
     conn.close()
- 
- 
+
+
 def extract_geospatial_info(text):
-    """Extract country names from text using geopy."""
-    locations = set()
-    '''for word in text.split():
-        try:
-            location = geolocator.geocode(word, timeout=2)
-            if location:
-                locations.add(location.address.split(",")[-1].strip())
-        except Exception:
-            continue'''
-    return list(locations)
- 
+    """
+    Extract country names from the article text using simple substring matching.
+    This function looks for known country names and common aliases.
+    """
+    # Define a list of known country names (you can expand this list as needed)
+    KNOWN_COUNTRIES = [
+        "United States", "United Kingdom", "Saudi Arabia", "China",
+        "India", "Germany", "France", "United Arab Emirates", "Brazil", "Canada"
+    ]
+    
+    # Define aliases mapping (e.g., US or UAE)
+    COUNTRY_ALIASES = {
+        "US": "United States",
+        "USA": "United States",
+        "UAE": "United Arab Emirates",
+        "UK": "United Kingdom",
+        "KSA": "Saudi Arabia"
+    }
+    
+    found_countries = set()
+    text_lower = text.lower()
+    
+    # Check for full country names
+    for country in KNOWN_COUNTRIES:
+        if country.lower() in text_lower:
+            found_countries.add(country)
+    
+    # Check for aliases
+    for alias, full_name in COUNTRY_ALIASES.items():
+        if alias.lower() in text_lower:
+            found_countries.add(full_name)
+    
+    return list(found_countries)
+
 def extract_full_text(url):
     """Scrapes and extracts the full text of an article."""
     try:
@@ -220,18 +243,18 @@ def extract_full_text(url):
         
         if response.status_code != 200:
             return "Error: Unable to fetch article"
- 
+
         soup = BeautifulSoup(response.text, 'html.parser')
         paragraphs = soup.find_all('p')
         article_text = "\n".join(p.get_text() for p in paragraphs)
         return re.sub(r'\s+', ' ', article_text).strip()
- 
+
     except Exception as e:
         return f"Error extracting text: {e}"
- 
+
 def get_llm_summary(text):
     """
-    Writes the scraped text to a temporary file and calls LLM_Summary.py
+    Writes the scraped text to a temporary file and calls LLM_Summary.py 
     with that file as input. Returns the summary output.
     """
     # Create a temporary file (if LLM_Summary.py expects a PDF, consider saving as .pdf
@@ -239,22 +262,23 @@ def get_llm_summary(text):
     with tempfile.NamedTemporaryFile(delete=False, suffix=".txt", mode="w", encoding="utf-8") as temp_file:
         temp_file.write(text)
         temp_file_path = temp_file.name
- 
+
     try:
         # Run LLM_Summary.py with the temporary file as argument.
         output = subprocess.check_output(
-            ["python3", "summary.py", temp_file_path],
+            ["python", "summary.py", temp_file_path],
             universal_newlines=True,
             timeout=120  # adjust timeout as needed
         )
         # Parsing the output
         output_lines = output.strip().split("\n")
+        
         summary_lines = []
         novelty_text = ""
         heat_text = ""
         relevance_score = None
         collecting_summary, collecting_novelty, collecting_heat = False, False, False
- 
+
         for line in output_lines:
             if line.startswith("SUMMARY:"):
                 collecting_summary = True
@@ -282,11 +306,16 @@ def get_llm_summary(text):
                 novelty_text += " " + line.strip()
             elif collecting_heat:
                 heat_text += " " + line.strip()
- 
+
+        # Extract only the numeric scores
+        novelty_score = float(re.search(r'\d+', novelty_text).group()) if re.search(r'\d+', novelty_text) else None
+        heat_score = float(re.search(r'\d+', heat_text).group()) if re.search(r'\d+', heat_text) else None
+
         # Join extracted multi-line outputs into full text
         summary = "\n".join(summary_lines).strip()
-        return summary, relevance_score, novelty_text, heat_text
- 
+        
+        return summary, relevance_score, novelty_score, heat_score
+
     except Exception as e:
         return f"Error in LLM summary: {e}"
     
@@ -298,7 +327,7 @@ def article_exists(link):
     result = c.fetchone()[0]
     conn.close()
     return result > 0  # Returns True if the article exists, False otherwise
- 
+
 def fetch_rss_feeds():
     """Enhanced RSS feed fetching using colleague's implementation."""
     print("Fetching RSS feeds...")
@@ -312,11 +341,11 @@ def fetch_rss_feeds():
             if feed.bozo:
                 print(f"Warning: Error parsing feed: {feed.bozo_exception}")
                 continue
- 
+
             for entry in feed.entries:
                 title = entry.get("title", "No title")
                 link = entry.get("link", "No link")
- 
+
                 if article_exists(link):  # Skip if the article is already in the database
                     print(f"Skipping existing article: {title}")
                     continue
@@ -324,12 +353,16 @@ def fetch_rss_feeds():
                 scraped_text = extract_full_text(link) if link != "No link" else ""
                 
                 published_date = ''
-                location = extract_geospatial_info(scraped_text)
+                # location = extract_geospatial_info(scraped_text)
+                countries = extract_geospatial_info(scraped_text)
+                # Convert list to a comma-separated string (if any countries are found)
+                countries_str = ",".join(countries) if countries else ""
                 # Only run LLM_Summary.py if the article contains any of the keywords.
                 clean_text = f"{title} {scraped_text}".lower()
                 if any(keyword.lower() in clean_text for keyword in TECHNOLOGY_KEYWORDS):
                     # Call the LLM summarizer with the scraped text.
                     llm_summary, relevance, novelity, heat_score = get_llm_summary(scraped_text)
+
                     insert_article(
                         title=title,
                         link=link,
@@ -340,14 +373,14 @@ def fetch_rss_feeds():
                         published_date=published_date.strftime("%Y-%m-%d %H:%M:%S") if published_date!='' else '',
                         source=name,
                         full_text=scraped_text,
-                        locations=str(location)
+                        locations=countries_str
                     )
-                    print('Article inserted')
+
             time.sleep(1)  # Rate limiting
             
         except Exception as e:
             print(f"Error processing feed {name}: {e}")
- 
+
 def fetch_arxiv():
     """Fetch articles from arXiv."""
     print("Fetching from arXiv (oil AND gas)...")
@@ -375,15 +408,15 @@ def fetch_arxiv():
             print(f"ArXiv returned non-200 status code: {response.status_code}")
     except Exception as e:
         print(f"Error fetching data from arXiv: {e}")
- 
+
 def main():
     print("Creating database table if not exists...")
     create_articles_table()
- 
+
     print("Starting data collection...")
     while True:
         fetch_rss_feeds()
         fetch_arxiv()
- 
+
 if __name__ == "__main__":
     main()

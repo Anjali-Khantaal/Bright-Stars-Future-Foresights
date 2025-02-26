@@ -7,12 +7,11 @@ from huggingface_hub import InferenceClient
 if len(sys.argv) > 1:
     input_path = sys.argv[1]
 else:
-    # input_path = "TechnologyandEnergyManagementinOilGasIndustries.pdf"
     print("Usage: python LLM_Summary.py <input_file>")
     sys.exit(1)
 
 # Configuration for the LLM summarizer
-API_KEY = "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"  # Replace with your Hugging Face API token if needed
+API_KEY = "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"  # Replace with your Hugging Face API token if needed
 model = "mistralai/Mistral-7B-Instruct-v0.3"
 
 client = InferenceClient(model=model, token=API_KEY)
@@ -64,11 +63,16 @@ def extract_text(input_path):
 # 3. Compute Relevance, Novelty & Heat Scores
 # ==========================
 def compute_relevance_score(text, keywords):
-    """Computes relevance based on keyword matching and embedding similarity."""
     text_lower = text.lower()
     keyword_matches = sum(1 for kw in keywords if kw.lower() in text_lower)
     similarity_score = len(set(text_lower.split()) & set(keywords)) / len(set(text_lower.split()))
-    return (keyword_matches * 2 + similarity_score * 10) / (len(keywords) + 1) * 100
+    # Compute the raw score using your existing formula
+    raw_score = (keyword_matches * 2 + similarity_score * 10) / (len(keywords) + 1) * 100
+    # Determine the maximum possible score:
+    max_possible = (len(keywords) * 2 + 10) / (len(keywords) + 1) * 100
+    # Normalize to a 0-100 scale:
+    normalized_score = (raw_score / max_possible) * 100
+    return normalized_score
 
 def compute_novelty_score(text):
     """Computes a novelty score using LLM analysis."""
@@ -79,7 +83,7 @@ def compute_novelty_score(text):
     - 100 means the technology is groundbreaking and recently emerging
     Here is the text:
     {text}
-    Give me a score and also give a single line explaination why it is novel or not.
+    Give me the numerical value only.
     """
     return client.text_generation(prompt, max_new_tokens=512).strip()
 
@@ -92,7 +96,7 @@ def compute_heat_score(text):
     - 100 means the technology is widely adopted and frequently discussed
     Here is the text:
     {text}
-    Give me a score and also give a single line explaination why it is hot or not.
+    Give me the numerical value only.
     """
     return client.text_generation(prompt, max_new_tokens=512).strip()
 
@@ -116,7 +120,7 @@ def summarize_with_llm(text):
     - Future implications and trends
     - ADNOC's strategic alignment and potential opportunities
 
-    Also provide me with the latest companies/startups which are working on these technologies/innovations, especially in the Oil and Gas field. Don't repeat companies and exclude obvious/big/famous ones.
+    Also provide me with the latest companies/startups which are working on these technologies/innovations, especially in the Oil and Gas field. Do not repeat any companies and exclude obvious/big/famous ones. Mention the company name and the technology they are working on. Also, don't give me the same company from another country as well.
     """
     return client.text_generation(prompt, max_new_tokens=1024)
 
