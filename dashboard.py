@@ -273,24 +273,43 @@ def display_heatmap(filtered_articles, theme="Dark"):
 
 
 def main():
-    st.image(ADNOC_LOGO_URL, width=150)
-    st.title("Future Foresights Dashboard")
+    # st.image(ADNOC_LOGO_URL, width=150)
+    # st.title("Future Foresights Dashboard")
     
     # Inject custom CSS for a cohesive look
     st.markdown("""
     <style>
-    body {
-        font-family: 'Arial', sans-serif;
+    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+    
+    .title-centered {
+        text-align: center;
+        font-size: 2.5rem;       /* Adjust as needed */
+        font-weight: 700;        /* Bold */
+        margin-top: 20px;
+        margin-bottom: 20px;
+        color: #ffffff;          /* Or your preferred color */
     }
+                
+    /* 2) Apply it globally */
+    body {
+        font-family: 'Roboto', sans-serif;
+        margin: 0;
+        padding: 0;
+    }
+    /* 3) Make a subtle gradient background for the main container in Dark mode */
+    [data-testid="stAppViewContainer"] {
+        background: linear-gradient(135deg, #1e1e1e 0%, #2b2b2b 100%);
+        color: #ffffff;
+    }          
     .summary-container {
-       background-color: #262730;
-       border-left: 4px solid #009688;
-       padding: 15px;
-       margin: 15px 0;
-       border-radius: 8px;
-       line-height: 1.5;
-       color: #ffffff;
-       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        background-color: #262730;
+        border-left: 4px solid #009688;
+        padding: 15px;
+        margin: 15px 0;
+        border-radius: 8px;
+        line-height: 1.5;
+        color: #ffffff;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     }
     .summary-container p {
        margin-bottom: 8px;
@@ -330,6 +349,10 @@ def main():
        font-size: 0.75rem;
        margin-left: 6px;
     }
+    .element-container:hover .stProgress > div {
+        transform: scale(1.03);
+        transition: transform 0.2s ease-in-out;
+    }
     </style>
     """, unsafe_allow_html=True)
     
@@ -361,6 +384,13 @@ def main():
             color: #ffffff !important;
         }
         </style>
+        """, unsafe_allow_html=True)
+    
+    st.markdown(f"""
+        <div style='text-align: center;'>
+            <img src='{ADNOC_LOGO_URL}' style='width: 150px; margin-bottom: 10px;' />
+            <h1 class='title-centered'>Future Foresights Dashboard</h1>
+        </div>
         """, unsafe_allow_html=True)
     
     st.sidebar.markdown("---")
@@ -405,7 +435,7 @@ def main():
         sort_by=selected_sort
     )
     
-    st.write(f"**Found {len(articles)} articles** matching your criteria:")
+    st.write(f"Based on the current filters (in the sidebar): **Found {len(articles)} articles** matching your criteria:")
 
     if st.checkbox("Show Choropleth Map"):
         st.header("Choropleth Map of Countries")
@@ -414,6 +444,7 @@ def main():
     for article in articles:
         (article_id, title, link, snippet, full_text, published_date, source,
          relevance_score, novelty_score, heat_score, locations) = article
+        st.markdown("<div class='article-container'>", unsafe_allow_html=True)
         
         rel_val = safe_float_str(relevance_score)
         nov_val = safe_float_str(novelty_score)
@@ -472,7 +503,7 @@ def main():
         st.markdown(summary_html, unsafe_allow_html=True)
         st.markdown(f"[Read More]({link})", unsafe_allow_html=True)
         st.write("---")
-    
+        st.markdown("</div>", unsafe_allow_html=True)
     # Uncomment to display the geospatial map:
     # st.header("Geospatial Insights")
     # display_geospatial_map(articles)
