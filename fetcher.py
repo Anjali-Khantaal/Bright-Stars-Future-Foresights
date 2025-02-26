@@ -184,7 +184,7 @@ def create_articles_table():
     conn.commit()
     conn.close()
 
-def insert_article(title, link, snippet, relevance_score,novelty_score, heat_score, published_date, source, full_text="", locations=""):
+def insert_article(title, link, snippet, relevance_score, novelty_score, heat_score, published_date, source, full_text="", locations=""):
     """Insert an article into the database."""
     conn = sqlite3.connect(DATABASE)
     c = conn.cursor()
@@ -201,39 +201,16 @@ def insert_article(title, link, snippet, relevance_score,novelty_score, heat_sco
 
 
 def extract_geospatial_info(text):
-    """
-    Extract country names from the article text using simple substring matching.
-    This function looks for known country names and common aliases.
-    """
-    # Define a list of known country names (you can expand this list as needed)
-    KNOWN_COUNTRIES = [
-        "United States", "United Kingdom", "Saudi Arabia", "China",
-        "India", "Germany", "France", "United Arab Emirates", "Brazil", "Canada"
-    ]
-    
-    # Define aliases mapping (e.g., US or UAE)
-    COUNTRY_ALIASES = {
-        "US": "United States",
-        "USA": "United States",
-        "UAE": "United Arab Emirates",
-        "UK": "United Kingdom",
-        "KSA": "Saudi Arabia"
-    }
-    
-    found_countries = set()
-    text_lower = text.lower()
-    
-    # Check for full country names
-    for country in KNOWN_COUNTRIES:
-        if country.lower() in text_lower:
-            found_countries.add(country)
-    
-    # Check for aliases
-    for alias, full_name in COUNTRY_ALIASES.items():
-        if alias.lower() in text_lower:
-            found_countries.add(full_name)
-    
-    return list(found_countries)
+    """Extract country names from text using geopy."""
+    locations = set()
+    '''for word in text.split():
+        try:
+            location = geolocator.geocode(word, timeout=2)
+            if location:
+                locations.add(location.address.split(",")[-1].strip())
+        except Exception:
+            continue'''
+    return list(locations)
 
 def extract_full_text(url):
     """Scrapes and extracts the full text of an article."""
@@ -307,14 +284,9 @@ def get_llm_summary(text):
             elif collecting_heat:
                 heat_text += " " + line.strip()
 
-        # Extract only the numeric scores
-        novelty_score = float(re.search(r'\d+', novelty_text).group()) if re.search(r'\d+', novelty_text) else None
-        heat_score = float(re.search(r'\d+', heat_text).group()) if re.search(r'\d+', heat_text) else None
-
         # Join extracted multi-line outputs into full text
         summary = "\n".join(summary_lines).strip()
-        
-        return summary, relevance_score, novelty_score, heat_score
+        return summary, relevance_score, novelty_text, heat_text
 
     except Exception as e:
         return f"Error in LLM summary: {e}"
@@ -349,14 +321,22 @@ def fetch_rss_feeds():
                 if article_exists(link):  # Skip if the article is already in the database
                     print(f"Skipping existing article: {title}")
                     continue
-                # Instead of using the provided summary, we scrape the article.
+                
+                # Extract and format the published date
+                published_date = ""
+                if hasattr(entry, 'published_parsed') and entry.published_parsed:
+                    published_date = time.strftime('%Y-%m-%d', entry.published_parsed)
+                elif hasattr(entry, 'updated_parsed') and entry.updated_parsed:
+                    published_date = time.strftime('%Y-%m-%d', entry.updated_parsed)
+                
+                # If still no date, use today's date
+                if not published_date:
+                    published_date = datetime.now().strftime('%Y-%m-%d')
+                
+                # Rest of your code remains the same...
                 scraped_text = extract_full_text(link) if link != "No link" else ""
                 
-                published_date = ''
-                # location = extract_geospatial_info(scraped_text)
-                countries = extract_geospatial_info(scraped_text)
-                # Convert list to a comma-separated string (if any countries are found)
-                countries_str = ",".join(countries) if countries else ""
+                location = extract_geospatial_info(scraped_text)
                 # Only run LLM_Summary.py if the article contains any of the keywords.
                 clean_text = f"{title} {scraped_text}".lower()
                 if any(keyword.lower() in clean_text for keyword in TECHNOLOGY_KEYWORDS):
@@ -370,10 +350,10 @@ def fetch_rss_feeds():
                         relevance_score=relevance,
                         novelty_score=novelity,
                         heat_score=heat_score,
-                        published_date=published_date.strftime("%Y-%m-%d %H:%M:%S") if published_date!='' else '',
+                        published_date=published_date,  # Now this will have a value
                         source=name,
                         full_text=scraped_text,
-                        locations=countries_str
+                        locations=str(location)
                     )
 
             time.sleep(1)  # Rate limiting
