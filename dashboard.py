@@ -345,12 +345,21 @@ def get_articles(search_query=None, source_filter="All", categories=None, date_r
 def display_choropleth_map(filtered_articles, theme="Dark"):
     country_counts = {}
     for article in filtered_articles:
-        locations_str = article[10]  
+        locations_str = article[10]
         if locations_str:
-            countries = [country.strip() for country in locations_str.split(",") if country.strip()]
+            try:
+                # Safely evaluate the string to get a list
+                countries = ast.literal_eval(locations_str)
+                # Make sure countries is a list; if not, wrap it in a list
+                if not isinstance(countries, list):
+                    countries = [countries]
+            except Exception as e:
+                # Fallback: if parsing fails, use the raw string
+                countries = [locations_str]
             for country in countries:
-                country_counts[country] = country_counts.get(country, 0) + 1
-
+                country = country.strip()  # Clean up any whitespace
+                if country:  # Ensure it's not empty
+                    country_counts[country] = country_counts.get(country, 0) + 1
     df = pd.DataFrame(list(country_counts.items()), columns=["Country", "Count"])
     geojson_url = "https://raw.githubusercontent.com/python-visualization/folium/master/examples/data/world-countries.json"
     world_geo = requests.get(geojson_url).json()
@@ -377,7 +386,7 @@ def display_choropleth_map(filtered_articles, theme="Dark"):
 def display_geospatial_map(filtered_articles):
     m = folium.Map(location=[20, 0], zoom_start=2)
     for article in filtered_articles:
-        _, title, _, _, _, _, _, _, _, locations = article
+        _, title, _, _, _, _, _, _, _,_, locations = article
         if locations:
             for loc in locations.split(", "):
                 coordinates = geocode(loc)

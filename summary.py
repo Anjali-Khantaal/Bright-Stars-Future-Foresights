@@ -58,26 +58,11 @@ def extract_text(input_path):
 # 3. Compute Relevance, Novelty & Heat Scores
 # ==========================
 def compute_relevance_score(text, keywords):
-    """Computes a normalized relevance score based on keyword matching and word similarity."""
+    """Computes relevance based on keyword matching and embedding similarity."""
     text_lower = text.lower()
     keyword_matches = sum(1 for kw in keywords if kw.lower() in text_lower)
-
-    # Compute simple similarity based on common words
-    text_words = set(text_lower.split())
-    keyword_words = set(kw.lower() for kw in keywords)
-    similarity_score = len(text_words & keyword_words) / (len(text_words) + 1)  # Avoid division by zero
-
-    # Raw score calculation
-    raw_score = (keyword_matches * 2 + similarity_score * 10) / (len(keywords) + 1) * 100
-
-    # Normalization: Scale raw score between 0 and 100
-    max_possible_score = (len(keywords) * 2 + 10) / (len(keywords) + 1) * 100  # Theoretical max score
-    normalized_score = (raw_score / max_possible_score) * 100 if max_possible_score > 0 else 0
-
-    # Ensure it's within bounds
-    normalized_score = min(max(normalized_score, 0), 100)
-
-    return normalized_score
+    similarity_score = len(set(text_lower.split()) & set(keywords)) / len(set(text_lower.split()))
+    return (keyword_matches * 2 + similarity_score * 10) / (len(keywords) + 1) * 100
 
 
 
