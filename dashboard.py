@@ -45,12 +45,151 @@ DATABASE = "articles.db"
 ADNOC_LOGO_URL = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRjLmGUCFcKxiEkiIl_YMaJ1GL9iPUwIZWojQ&s"
 
 PREDEFINED_CATEGORIES = {
-    "Oil & Gas Industry": ["oil", "gas", "petroleum"],
-    "Digital Transformation & Automation": ["technology", "innovation", "digital transformation"],
-    "AI & Machine Learning Applications": ["AI", "machine learning", "big data analytics"],
-    "Sustainability & Energy Transition": ["carbon capture", "hydrogen", "renewable energy"],
-    "Advanced Materials & Sensing": ["nanomaterials", "smart sensors", "fiber optic sensing"],
-    "Subsurface & Seismic Technologies": ["seismic inversion", "electromagnetic exploration", "microseismic monitoring"]
+    # 1) Merged old “AI & Machine Learning Applications” with new “Artificial Intelligence and Machine Learning”
+    "Artificial Intelligence (AI) and Machine Learning": [
+        "AI",
+        "machine learning",
+        "big data analytics",
+        "deep learning",
+        "neural networks",
+        "NLP"
+    ],
+
+    # 2) Merged old “Digital Transformation & Automation” with new “Digital Transformation and Automation”
+    "Digital Transformation and Automation": [
+        "technology",
+        "innovation",
+        "digital transformation",
+        "automation",
+        "process automation",
+        "digitalization",
+        "Industry 4.0"
+    ],
+
+    # 3) Combined old “Oil & Gas Industry” + old “Sustainability & Energy Transition” + new “Energy and Resource Management”
+    #    + new “Sustainability and Green Technologies” into one broader category
+    "Energy, Resource Management, and Sustainability": [
+        "oil",
+        "gas",
+        "petroleum",
+        "carbon capture",
+        "hydrogen",
+        "renewable energy",
+        "green technologies",
+        "clean energy",
+        "environmental stewardship",
+        "resource optimization",
+        "energy efficiency"
+    ],
+
+    # 4) Kept old “Advanced Materials & Sensing” (renamed slightly)
+    "Advanced Materials and Sensing": [
+        "nanomaterials",
+        "smart sensors",
+        "fiber optic sensing",
+        "advanced composites",
+        "material innovation"
+    ],
+
+    # 5) Kept old “Subsurface & Seismic Technologies”
+    "Subsurface and Seismic Technologies": [
+        "seismic inversion",
+        "electromagnetic exploration",
+        "microseismic monitoring",
+        "geophysical imaging",
+        "subsurface modeling"
+    ],
+
+    # 6) Added new “Advanced Computing and Quantum Technologies”
+    "Advanced Computing and Quantum Technologies": [
+        "quantum computing",
+        "high-performance computing",
+        "parallel computing",
+        "quantum algorithms",
+        "quantum cryptography"
+    ],
+
+    # 7) (Merged into #1 above; so skip if you prefer only one AI/ML category)
+    #    "Artificial Intelligence and Machine Learning": [],
+
+    # 8) New “Biotechnology and Health Innovations”
+    "Biotechnology and Health Innovations": [
+        "gene editing",
+        "biopharma",
+        "medical devices",
+        "diagnostics",
+        "health tech"
+    ],
+
+    # 9) New “Blockchain and Decentralization”
+    "Blockchain and Decentralization": [
+        "blockchain",
+        "cryptocurrency",
+        "smart contracts",
+        "distributed ledger",
+        "decentralized finance"
+    ],
+
+    # 10) New “Consumer and Retail Innovations”
+    "Consumer and Retail Innovations": [
+        "e-commerce",
+        "retail tech",
+        "customer experience",
+        "omnichannel",
+        "consumer behavior"
+    ],
+
+    # 11) New “Cybersecurity and Privacy”
+    "Cybersecurity and Privacy": [
+        "data security",
+        "encryption",
+        "threat detection",
+        "privacy",
+        "vulnerability assessment"
+    ],
+
+    # 12) (Merged into #2 above; so skip if you prefer only one digital automation category)
+    #     "Digital Transformation and Automation": [],
+
+    # 13) New “Education and Workforce Development”
+    "Education and Workforce Development": [
+        "edtech",
+        "skills training",
+        "online learning",
+        "continuing education",
+        "vocational training"
+    ],
+
+    # 14) New “Robotics and Automation”
+    "Robotics and Automation": [
+        "robotics",
+        "autonomous systems",
+        "industrial automation",
+        "robotic process automation",
+        "control systems"
+    ],
+
+    # 15) New “Smart Cities and Infrastructure”
+    "Smart Cities and Infrastructure": [
+        "IoT",
+        "urban planning",
+        "transportation",
+        "infrastructure",
+        "connected devices",
+        "public services"
+    ],
+
+    # 16) New “Space Exploration and Astrophysics”
+    "Space Exploration and Astrophysics": [
+        "space tech",
+        "rocketry",
+        "satellites",
+        "astronomy",
+        "space telescopes"
+    ],
+
+    # 17) Always good to keep an “Other” catch-all
+    "Other": []
 }
 
 # A dictionary to handle common short-form country names.
@@ -206,12 +345,21 @@ def get_articles(search_query=None, source_filter="All", categories=None, date_r
 def display_choropleth_map(filtered_articles, theme="Dark"):
     country_counts = {}
     for article in filtered_articles:
-        locations_str = article[10]  
+        locations_str = article[10]
         if locations_str:
-            countries = [country.strip() for country in locations_str.split(",") if country.strip()]
+            try:
+                # Safely evaluate the string to get a list
+                countries = ast.literal_eval(locations_str)
+                # Make sure countries is a list; if not, wrap it in a list
+                if not isinstance(countries, list):
+                    countries = [countries]
+            except Exception as e:
+                # Fallback: if parsing fails, use the raw string
+                countries = [locations_str]
             for country in countries:
-                country_counts[country] = country_counts.get(country, 0) + 1
-
+                country = country.strip()  # Clean up any whitespace
+                if country:  # Ensure it's not empty
+                    country_counts[country] = country_counts.get(country, 0) + 1
     df = pd.DataFrame(list(country_counts.items()), columns=["Country", "Count"])
     geojson_url = "https://raw.githubusercontent.com/python-visualization/folium/master/examples/data/world-countries.json"
     world_geo = requests.get(geojson_url).json()
@@ -238,7 +386,7 @@ def display_choropleth_map(filtered_articles, theme="Dark"):
 def display_geospatial_map(filtered_articles):
     m = folium.Map(location=[20, 0], zoom_start=2)
     for article in filtered_articles:
-        _, title, _, _, _, _, _, _, _, locations = article
+        _, title, _, _, _, _, _, _, _,_, locations = article
         if locations:
             for loc in locations.split(", "):
                 coordinates = geocode(loc)

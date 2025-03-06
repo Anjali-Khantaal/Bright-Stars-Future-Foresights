@@ -11,7 +11,7 @@ else:
     sys.exit(1)
 
 # Configuration for the LLM summarizer
-API_KEY = "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"  # Replace with your Hugging Face API token if needed
+API_KEY = "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"  # Replace with your Hugging Face API token if needed
 model = "mistralai/Mistral-7B-Instruct-v0.3"
 
 client = InferenceClient(model=model, token=API_KEY)
@@ -25,11 +25,6 @@ except ImportError:
     print("Please install pdfplumber: pip install pdfplumber")
     sys.exit(1)
 
-try:
-    from sentence_transformers import SentenceTransformer
-except ImportError:
-    print("Please install sentence-transformers: pip install sentence-transformers")
-    sys.exit(1)
 
 # ==========================
 # 2. Text Extraction
@@ -63,16 +58,13 @@ def extract_text(input_path):
 # 3. Compute Relevance, Novelty & Heat Scores
 # ==========================
 def compute_relevance_score(text, keywords):
+    """Computes relevance based on keyword matching and embedding similarity."""
     text_lower = text.lower()
     keyword_matches = sum(1 for kw in keywords if kw.lower() in text_lower)
     similarity_score = len(set(text_lower.split()) & set(keywords)) / len(set(text_lower.split()))
-    # Compute the raw score using your existing formula
-    raw_score = (keyword_matches * 2 + similarity_score * 10) / (len(keywords) + 1) * 100
-    # Determine the maximum possible score:
-    max_possible = (len(keywords) * 2 + 10) / (len(keywords) + 1) * 100
-    # Normalize to a 0-100 scale:
-    normalized_score = (raw_score / max_possible) * 100
-    return normalized_score
+    return (keyword_matches * 2 + similarity_score * 10) / (len(keywords) + 1) * 100
+
+
 
 def compute_novelty_score(text):
     """Computes a novelty score using LLM analysis."""

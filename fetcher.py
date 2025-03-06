@@ -272,7 +272,6 @@ def get_llm_summary(text):
         )
         # Parsing the output
         output_lines = output.strip().split("\n")
-        
         summary_lines = []
         novelty_text = ""
         heat_text = ""
@@ -313,7 +312,6 @@ def get_llm_summary(text):
 
         # Join extracted multi-line outputs into full text
         summary = "\n".join(summary_lines).strip()
-        
         return summary, relevance_score, novelty_score, heat_score
 
     except Exception as e:
@@ -335,21 +333,19 @@ def fetch_rss_feeds():
     
     for name, url in FEEDS.items():
         print(f"Fetching feed: {name} ({url})")
-        try:
-            feed = feedparser.parse(url)
-            
-            if feed.bozo:
-                print(f"Warning: Error parsing feed: {feed.bozo_exception}")
-                continue
+        feed = feedparser.parse(url)
+        
+        if feed.bozo:
+            print(f"Warning: Error parsing feed: {feed.bozo_exception}")
+            continue
 
-            for entry in feed.entries:
+        for entry in feed.entries:
+            try:
                 title = entry.get("title", "No title")
                 link = entry.get("link", "No link")
-
                 if article_exists(link):  # Skip if the article is already in the database
                     print(f"Skipping existing article: {title}")
                     continue
-                
                 # Extract and format the published date
                 published_date = ""
                 if hasattr(entry, 'published_parsed') and entry.published_parsed:
@@ -360,34 +356,33 @@ def fetch_rss_feeds():
                 # If still no date, use today's date
                 if not published_date:
                     published_date = datetime.now().strftime('%Y-%m-%d')
-                
                 # Rest of your code remains the same...
                 scraped_text = extract_full_text(link) if link != "No link" else ""
                 
                 location = extract_geospatial_info(scraped_text)
                 # Only run LLM_Summary.py if the article contains any of the keywords.
                 clean_text = f"{title} {scraped_text}".lower()
-                if any(keyword.lower() in clean_text for keyword in TECHNOLOGY_KEYWORDS):
+                if any(keyword.lower() in clean_text for keyword in TECHNOLOGY_KEYWORDS): 
                     # Call the LLM summarizer with the scraped text.
                     llm_summary, relevance, novelity, heat_score = get_llm_summary(scraped_text)
-
-                    insert_article(
-                        title=title,
-                        link=link,
-                        snippet=llm_summary,  # using the LLM summary as snippet
-                        relevance_score=relevance,
-                        novelty_score=novelity,
-                        heat_score=heat_score,
-                        published_date=published_date,  # Now this will have a value
-                        source=name,
-                        full_text=scraped_text,
-                        locations=str(location)
-                    )
-
-            time.sleep(1)  # Rate limiting
-            
-        except Exception as e:
-            print(f"Error processing feed {name}: {e}")
+                    if relevance>10:
+                        print('Article Uploaded')
+                        insert_article(
+                            title=title,
+                            link=link,
+                            snippet=llm_summary,  # using the LLM summary as snippet
+                            relevance_score=relevance,
+                            novelty_score=novelity,
+                            heat_score=heat_score,
+                            published_date=published_date,  # Now this will have a value
+                            source=name,
+                            full_text=scraped_text,
+                            locations=str(location)
+                        )
+            except:
+                print('Error in article extraction')
+                continue
+        time.sleep(0.5)  # Rate limiting
 
 def fetch_arxiv():
     """Fetch articles from arXiv."""
