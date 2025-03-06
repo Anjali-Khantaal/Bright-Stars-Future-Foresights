@@ -106,11 +106,11 @@ TECHNOLOGY_KEYWORDS = [
 
 # RSS feed sources from colleague's script
 FEEDS = {
-        "Reuters Commodities": "http://feeds.reuters.com/reuters/commoditiesNews",
-        "OilPrice": "https://oilprice.com/rss",
+        #"Reuters Science": "https://rss.csmonitor.com/feeds/science",
+        #"Reuters Commodities": "http://feeds.reuters.com/reuters/commoditiesNews",
+        #"OilPrice": "https://oilprice.com/rss",
         "Rigzone": "https://www.rigzone.com/news/rss/rigzone_latest.aspx",
         "EIA (U.S. Energy Information Administration)": "https://www.eia.gov/rss/news.xml",
-        "U.S. Department of Energy": "https://www.energy.gov/rss.xml",
         "EPA News": "https://www.epa.gov/rss/epa-news.xml",
         "Offshore Energy.biz": "https://www.offshore-energy.biz/feed/",
         "Energy Voice": "https://www.energyvoice.com/feed/",

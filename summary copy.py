@@ -1,7 +1,7 @@
 import os
 import sys
 import re
-import google.generativeai as genai
+from huggingface_hub import InferenceClient
 
 # Check for input file argument
 if len(sys.argv) > 1:
@@ -11,9 +11,10 @@ else:
     sys.exit(1)
 
 # Configuration for the LLM summarizer
-API_KEY = "AIzaSyDPKxvhhW-wM4l9dB8sgFT8a9HLmBEq8gk"
-genai.configure(api_key=API_KEY)  # Replace with your Hugging Face API token if needed
-model = genai.GenerativeModel('gemini-2.0-flash')
+#API_KEY = ""
+model = "mistralai/Mistral-7B-Instruct-v0.3"
+
+client = InferenceClient(model=model, token=API_KEY)
 
 # ==============================
 # 1. Import necessary libraries
@@ -76,12 +77,7 @@ def compute_novelty_score(text):
     {text}
     Give me the numerical value only.
     """
-    try:
-        response = model.generate_content(prompt)
-        return response.text.strip()
-    except Exception as e:
-        print(f"Error in Gemini API call: {e}")
-        return "0"
+    return client.text_generation(prompt, max_new_tokens=512).strip()
 
 def compute_heat_score(text):
     """Computes a heat score based on industry adoption and recurrence."""
@@ -94,12 +90,7 @@ def compute_heat_score(text):
     {text}
     Give me the numerical value only.
     """
-    try:
-        response = model.generate_content(prompt)
-        return response.text.strip()
-    except Exception as e:
-        print(f"Error in Gemini API call: {e}")
-        return "0"
+    return client.text_generation(prompt, max_new_tokens=512).strip()
 
 # ==========================
 # 4. Summarization
@@ -108,54 +99,22 @@ def summarize_with_llm(text):
     """Summarizes the text using an LLM with a detailed and structured prompt."""
     prompt = f"""
     You are an advanced AI model specializing in analyzing and summarizing articles related to technology, innovation, and industry trends. 
-    Provide a comprehensive analysis of the following text, formatted in Markdown.
-    Focus on ADNOC's strategic needs and format the output exactly as shown below.
+    Your task is to generate a concise and informative summary that captures the key points and insights from the provided text. 
+    Ensure that the summary highlights major advancements, industry impact, and relevance to emerging trends. And this is for ADNOC's strategic needs.
     
-    Text for analysis:
+    Here is the full article text:
     {text}
     
-    Format your response using this exact structure:
+    "Please provide a concise overview of the key technologies, innovations, and any forecasts mentioned, focusing on ADNOC's strategic needs."
+    Please provide a well-structured summary in bullet points, focusing on:
+    - Core technological innovations
+    - Industry impact and relevance
+    - Future implications and trends
+    - ADNOC's strategic alignment and potential opportunities
 
-    # Core Technological Innovations
-    1. [Detailed innovation point]
-    2. [Detailed innovation point]
-    (continue numbering for all relevant points)
-
-    # Industry Impact and Relevance
-    1. [Detailed impact point]
-    2. [Detailed impact point]
-    (continue numbering for all significant impacts)
-
-    # Future Implications and Trends
-    1. [Detailed trend]
-    2. [Detailed trend]
-    (continue numbering for all identified trends)
-
-    # ADNOC Strategic Alignment
-    1. [Strategic opportunity]
-    2. [Strategic opportunity]
-    (continue numbering for all strategic points)
-
-    # Emerging Companies and Technologies
-    1. [Company Name] - [Technology/Innovation] - [Brief Description]
-    2. [Company Name] - [Technology/Innovation] - [Brief Description]
-    (list all relevant companies, excluding major corporations)
-
-    Note: Provide comprehensive analysis with all relevant points. Do not limit to 3 points per section.
-    Focus on emerging technologies and specific technical details.
+    Also provide me with the latest companies/startups which are working on these technologies/innovations, especially in the Oil and Gas field. Do not repeat any companies and exclude obvious/big/famous ones. Mention the company name and the technology they are working on. Also, don't give me the same company from another country as well.
     """
-    try:
-        response = model.generate_content(prompt)
-        # Clean up the response
-        cleaned_text = response.text.strip()
-        # Ensure proper Markdown formatting
-        cleaned_text = re.sub(r'\n{3,}', '\n\n', cleaned_text)
-        # Remove any asterisks or bullet points
-        cleaned_text = re.sub(r'[*•―](?=\s)', '', cleaned_text)
-        return cleaned_text
-    except Exception as e:
-        print(f"Error in Gemini API call: {e}")
-        return ""
+    return client.text_generation(prompt, max_new_tokens=1024)
 
 # ==========================
 # 5. Main Execution
@@ -170,7 +129,7 @@ if __name__ == "__main__":
     relevance_score = compute_relevance_score(input_text, ["AI", "machine learning", "energy", "ESG", "sustainability", "oil", "gas"])
     novelty_score = compute_novelty_score(input_text)
     heat_score = compute_heat_score(input_text)
-  
+    
     print("SUMMARY:", summary)
     print("RELEVANCE SCORE:", relevance_score)
     print("NOVELTY SCORE:", novelty_score)
